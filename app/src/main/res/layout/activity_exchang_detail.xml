@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_bg_color"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_layout" />
+
+    <!--<include layout="@layout/empty_layout" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10">
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="调出仓库"
+                android:textColor="@color/default_content_color"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/tv_output"
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_5"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:hint="请选择"
+                android:singleLine="true"
+                android:textColor="@color/default_content_color"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="调入仓库"
+                android:textColor="@color/default_content_color"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/tv_input"
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_5"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:hint="请选择"
+                android:singleLine="true"
+                android:textColor="@color/default_content_color"
+                android:textSize="@dimen/sp_14" />
+
+        </LinearLayout>
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/dp_50"-->
+        <!--android:background="@color/white"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingLeft="@dimen/dp_10"-->
+        <!--android:paddingRight="@dimen/dp_10">-->
+
+        <!--<TextView-->
+        <!--android:layout_width="@dimen/dp_60"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:singleLine="true"-->
+        <!--android:text="调入仓库"-->
+        <!--android:textColor="@color/default_content_color"-->
+        <!--android:textSize="@dimen/sp_14" />-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_input"-->
+        <!--android:layout_width="@dimen/dp_0"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginLeft="@dimen/dp_5"-->
+        <!--android:layout_weight="1"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:hint="请选择调入仓库"-->
+        <!--android:singleLine="true"-->
+        <!--android:textColor="@color/default_content_color"-->
+        <!--android:textSize="@dimen/sp_14" />-->
+
+        <!--</LinearLayout>-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:layout_marginTop="@dimen/dp_1"
+            android:layout_marginBottom="@dimen/dp_1"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10">
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="调入仓位"
+                android:textColor="@color/default_content_color"
+                android:textSize="@dimen/sp_14" />
+
+            <EditText
+                android:id="@+id/tv_input_pos"
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_5"
+                android:layout_weight="1"
+                android:background="@null"
+                android:capitalize="characters"
+                android:gravity="center_vertical"
+                android:hint="请输入调入仓位"
+                android:paddingLeft="@dimen/dp_10"
+                android:singleLine="true"
+                android:textColor="@color/default_content_color"
+                android:textSize="@dimen/sp_14" />
+
+            <ImageView
+                android:id="@+id/iv_input_pos"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingTop="5dp"
+                android:paddingBottom="@dimen/dp_5"
+                android:src="@mipmap/arrow_right" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginBottom="@dimen/dp_1"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dp_10">
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="扫描条码"
+                android:textColor="@color/default_content_color"
+                android:textSize="@dimen/sp_14" />
+
+            <EditText
+                android:id="@+id/et_barcode"
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dp_5"
+                android:layout_weight="1"
+                android:background="@color/red1"
+                android:capitalize="characters"
+                android:gravity="center_vertical"
+                android:hint="请输入条码"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
+                android:singleLine="true"
+                android:textColor="@color/default_content_color"
+                android:nextFocusDown="@id/et_barcode"
+                android:textSize="@dimen/sp_14" />
+        </LinearLayout>
+
+        <include layout="@layout/haihong_detail_layout" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <include layout="@layout/bottom_layout" />
+</LinearLayout>
