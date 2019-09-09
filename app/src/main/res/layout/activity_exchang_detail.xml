@@ -136,7 +136,7 @@
                 android:id="@+id/iv_input_pos"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/dp_10"
+                android:paddingLeft="@dimen/dp_5"
                 android:paddingTop="5dp"
                 android:paddingBottom="@dimen/dp_5"
                 android:src="@mipmap/arrow_right" />

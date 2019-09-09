@@ -200,8 +200,6 @@ public class ExchangDetailActivity extends AppCompatActivity {
                         } else {
                             setTvInput();
                         }
-
-
                     }
                 }
                 return false;
@@ -405,7 +403,7 @@ public class ExchangDetailActivity extends AppCompatActivity {
         tvWeight.setText("总重量：" + weight);
     }
 
-    //获取库位信息
+    //获取仓库信息
     private void getPos(int type) {
         LoadingDialog.showDialogForLoading(this);
         new NetUtil(getPosParams(), url, new ResponseListener() {

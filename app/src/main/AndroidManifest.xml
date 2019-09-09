@@ -13,8 +13,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".exchange.ExchangDetailActivity"></activity>
-        <activity android:name=".exchange.ExchangeActivity" />
+        <activity
+            android:name=".storage.StorageSearchActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".exchange.ExchangDetailActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".exchange.ExchangeActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".produce.ProduceActivity"
             android:screenOrientation="portrait" />

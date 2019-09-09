@@ -14,6 +14,7 @@ import com.yyy.yongli.exchange.ExchangeActivity;
 import com.yyy.yongli.interfaces.OnItemClickListener;
 import com.yyy.yongli.output.OutputListActivity;
 import com.yyy.yongli.produce.ProduceActivity;
+import com.yyy.yongli.storage.StorageSearchActivity;
 import com.yyy.yongli.total.TotalListActivity;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class HaiHongMainActivity extends AppCompatActivity {
 //        list.add(new Menu(2, R.mipmap.icon_output, "出库单"));
 //        list.add(new Menu(3, R.mipmap.icon_statistics, "盘点单"));
         list.add(new Menu(4, R.mipmap.icon_exchange, "调拨单"));
+        list.add(new Menu(5, R.mipmap.icon_storage_search, "库存查询"));
         menuUsualAdapter = new MenuUsualAdapter(list, this);
         rvMenu.setAdapter(menuUsualAdapter);
         NoScrollGvManager manager = new NoScrollGvManager(this, 4);
@@ -90,6 +92,10 @@ public class HaiHongMainActivity extends AppCompatActivity {
                 startActivity(intent);
             case 4:
                 intent.setClass(this, ExchangeActivity.class);
+                startActivity(intent);
+                break;
+            case 5:
+                intent.setClass(this, StorageSearchActivity.class);
                 startActivity(intent);
                 break;
             default:
