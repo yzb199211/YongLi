@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yyy.yongli.R;
 import com.yyy.yongli.dialog.LoadingDialog;
+import com.yyy.yongli.interfaces.OnChangedListener;
+import com.yyy.yongli.interfaces.OnEntryListener;
 import com.yyy.yongli.interfaces.OnSelectClickListener;
 import com.yyy.yongli.interfaces.ResponseListener;
 import com.yyy.yongli.lookup.Items;
@@ -77,7 +81,8 @@ public class InputAddActivity extends AppCompatActivity {
     String userid;
 
     int isRed = 0;
-    int storageId=0;
+    int storageId = 0;
+    int posId = 0;
 
     List<Items> lookUps;
     List<StorageStockMBean> storages;
@@ -111,18 +116,67 @@ public class InputAddActivity extends AppCompatActivity {
         ivRight.setVisibility(View.GONE);
         tvRight.setText("今日入库");
         initStorageSelect();
+        initPosSelect();
+        initBarcode();
+        initScanCode();
         setRedListener();
     }
 
+    private void initBarcode() {
+        tvBarcode.setTitle("大条码：");
+    }
+
+
+    private void initPosSelect() {
+        tvPos.setTitle("库位选择：");
+        tvPos.setHint("请选择库位");
+        int currentpos;
+        tvPos.setOnSelectClickListener(new OnSelectClickListener() {
+            @Override
+            public void onSelectClick(View view) {
+                if (storageId == 0) {
+                    Toasts.showShort(InputAddActivity.this, "请选择仓库");
+                } else {
+                }
+            }
+        });
+    }
+
     private void initStorageSelect() {
-        tvStorage.setTitle("仓库选择");
+        tvStorage.setTitle("仓库选择：");
         tvStorage.setHint("请选择仓库");
         tvStorage.setOnSelectClickListener(new OnSelectClickListener() {
             @Override
             public void onSelectClick(View view) {
-                pvStorage.show();
+                if (storages.size() > 0)
+                    pvStorage.show();
             }
         });
+    }
+
+    private void initScanCode() {
+        etCode.setTitle("条码扫描：");
+        etCode.setHint("请输入条码");
+        etCode.setInputType(InputType.TYPE_CLASS_NUMBER);
+        setCodeListener();
+    }
+
+    private void setCodeListener() {
+        etCode.setOnEntryListener(new OnEntryListener() {
+            @Override
+            public void onEntry(View view) {
+                whichCode(etCode.getText());
+            }
+        });
+    }
+
+    private void whichCode(String text) {
+        if (text.length() == 10) {
+
+        } else if (text.length() == 9) {
+
+        } else {
+        }
     }
 
     private void setRedListener() {
@@ -159,13 +213,13 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        LoadingDialog.show();
+        LoadingDialog.showDialogForLoading(this);
         new NetUtil(getParams(), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
                 try {
                     JSONObject jsonObject = new JSONObject(string);
-                    judgeSuccess(jsonObject, jsonObject.optBoolean("succcess"));
+                    judgeSuccess(jsonObject, jsonObject.optBoolean("success"));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -181,8 +235,8 @@ public class InputAddActivity extends AppCompatActivity {
         });
     }
 
-    private void judgeSuccess(JSONObject jsonObject, boolean succcess) throws JSONException {
-        if (succcess) {
+    private void judgeSuccess(JSONObject jsonObject, boolean success) throws JSONException {
+        if (success) {
             initData(jsonObject.optString("dataset"));
         } else {
             FinishLoading(jsonObject.optString(jsonObject.optString("message")));
@@ -190,10 +244,17 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void initData(String dataset) throws JSONException {
+
         JSONObject jsonObject = new JSONObject(dataset);
         storages.addAll(new Gson().fromJson(jsonObject.optString("BscDataStockM"), new TypeToken<List<StorageStockMBean>>() {
         }.getType()));
-        initStoragePick();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initStoragePick();
+            }
+        });
+
         FinishLoading(null);
     }
 
@@ -201,7 +262,8 @@ public class InputAddActivity extends AppCompatActivity {
         pvStorage = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
-
+                storageId = storages.get(options1).getIRecNo();
+                tvStorage.setContent(storages.get(options1).getSStockName());
             }
         })
                 .setTitleText("仓库选择")

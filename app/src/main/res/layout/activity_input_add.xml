@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/default_bg_color"
     android:orientation="vertical"
     tools:context=".input.InputAddActivity">
 
@@ -45,26 +46,35 @@
             <com.yyy.yongli.view.SelectItem
                 android:id="@+id/tv_Storage"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_1"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"/>
 
             <com.yyy.yongli.view.SelectItem
                 android:id="@+id/tv_pos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_1" />
+                android:layout_marginTop="@dimen/dp_1"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"/>
 
             <com.yyy.yongli.view.SelectItem
                 android:id="@+id/tv_barcode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_1"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"/>
 
             <com.yyy.yongli.view.EditItem
                 android:id="@+id/et_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_1" />
+                android:layout_marginTop="@dimen/dp_1"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
