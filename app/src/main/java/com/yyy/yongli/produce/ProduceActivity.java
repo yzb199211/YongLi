@@ -127,7 +127,6 @@ public class ProduceActivity extends AppCompatActivity {
         itemProduct.setHint("输入或扫描产量工序");
         itemProduct.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-
         itemCheck.setTitle("检验工序：");
         itemCheck.setHint("请选择检验工序");
         itemCheck.setVisibility(View.GONE);
