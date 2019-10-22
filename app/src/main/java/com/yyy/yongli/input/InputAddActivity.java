@@ -359,7 +359,6 @@ public class InputAddActivity extends AppCompatActivity {
         tvCurrent = v.findViewById(R.id.tv_current);
         tvElectrode = v.findViewById(R.id.tv_electrode);
         tvCount = v.findViewById(R.id.tv_count);
-
         tvCode = v.findViewById(R.id.tv_code);
 
         tvTitle.setText("规格：" + storageScanBean.getsElements());

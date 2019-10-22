@@ -1,4 +1,4 @@
-package com.yyy.yongli.scan;
+package com.yyy.yongli.output;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -39,6 +39,7 @@ import com.yyy.yongli.pick.builder.OptionsPickerBuilder;
 import com.yyy.yongli.pick.listener.OnOptionsSelectChangeListener;
 import com.yyy.yongli.pick.listener.OnOptionsSelectListener;
 import com.yyy.yongli.pick.view.OptionsPickerView;
+import com.yyy.yongli.scan.ScanTotalAdapter;
 import com.yyy.yongli.util.NetConfig;
 import com.yyy.yongli.util.NetParams;
 import com.yyy.yongli.util.NetUtil;
@@ -58,12 +59,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class Scan2Activity extends AppCompatActivity {
+public class OutputScanActivity extends AppCompatActivity {
     private static final String TAG = "Scan2Activity";
     @BindView(R.id.tv_title)
     TextView tvTitle;
-    @BindView(R.id.rl_top)
-    RelativeLayout rlTop;
     @BindView(R.id.rv_scan)
     RecyclerView rvScan;
     @BindView(R.id.tv_total)
@@ -182,7 +181,7 @@ public class Scan2Activity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!isShow && !hasFocus) {
-                    hideKeyBoard(Scan2Activity.this, etCode);
+                    hideKeyBoard(OutputScanActivity.this, etCode);
                 }
             }
         });
@@ -198,7 +197,7 @@ public class Scan2Activity extends AppCompatActivity {
                             codes.add(code);
                             getScamData(code);
                         } else {
-                            Toasts.showShort(Scan2Activity.this, "条码已存在");
+                            Toasts.showShort(OutputScanActivity.this, "条码已存在");
                         }
                     }
                 }
@@ -209,7 +208,7 @@ public class Scan2Activity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (isShow && !hasFocus) {
-                    hideKeyBoard(Scan2Activity.this, etStockPos);
+                    hideKeyBoard(OutputScanActivity.this, etStockPos);
                 }
             }
         });
@@ -232,7 +231,7 @@ public class Scan2Activity extends AppCompatActivity {
                         }
                     }
                     if (isNone) {
-                        Toasts.showShort(Scan2Activity.this, "该仓位不存在");
+                        Toasts.showShort(OutputScanActivity.this, "该仓位不存在");
                     }
                 }
                 return false;
@@ -301,7 +300,7 @@ public class Scan2Activity extends AppCompatActivity {
             @Override
             public void run() {
                 LoadingDialog.cancelDialogForLoading();
-                Toasts.showShort(Scan2Activity.this, message);
+                Toasts.showShort(OutputScanActivity.this, message);
             }
         });
     }
@@ -316,7 +315,7 @@ public class Scan2Activity extends AppCompatActivity {
             public void run() {
                 Log.e(TAG, TAG);
                 if (mAdapter == null) {
-                    mAdapter = new InputAdapter(Scan2Activity.this, showList);
+                    mAdapter = new InputAdapter(OutputScanActivity.this, showList);
                     rvScan.setAdapter(mAdapter);
                     tvTitle.setText("扫描条码" + "(" + products.size() + ")");
                     mAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -744,7 +743,7 @@ public class Scan2Activity extends AppCompatActivity {
                         codes.add(code);
                         getScamData(code);
                     } else {
-                        Toasts.showShort(Scan2Activity.this, "条码已存在");
+                        Toasts.showShort(OutputScanActivity.this, "条码已存在");
                     }
 
                 }
@@ -769,7 +768,7 @@ public class Scan2Activity extends AppCompatActivity {
                     }
                 }
                 if (isNone) {
-                    Toasts.showShort(Scan2Activity.this, "该仓位不存在");
+                    Toasts.showShort(OutputScanActivity.this, "该仓位不存在");
                 }
             }
         }
@@ -818,7 +817,7 @@ public class Scan2Activity extends AppCompatActivity {
                                 refreshList();
 
                             } else {
-                                Toasts.showShort(Scan2Activity.this, "条码错误");
+                                Toasts.showShort(OutputScanActivity.this, "条码错误");
                                 isLoad = false;
                             }
 

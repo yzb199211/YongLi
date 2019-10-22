@@ -651,11 +651,6 @@ public class OutputDetailActivity extends AppCompatActivity {
         pvStock = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
-                //返回的分别是三个级别的选中位置
-//                String tx = options1Items.get(options1).getPickerViewText()
-//                        + options2Items.get(options1).get(options2)
-                /* + options3Items.get(options1).get(options2).get(options3).getPickerViewText()*/
-                ;
                 tvStorage.setText(stocks.get(options1).getPickerViewText());
                 stockid = stocks.get(options1).getIRecNo();
             }
@@ -665,29 +660,13 @@ public class OutputDetailActivity extends AppCompatActivity {
                 .setDividerColor(Color.LTGRAY)//设置分割线的颜色
                 .setSelectOptions(0)//默认选中项
                 .isDialog(true)
-//                .setBgColor(Color.BLACK)
-//                .setTitleBgColor(Color.DKGRAY)
-//                .setTitleColor(Color.LTGRAY)
-//                .setCancelColor(Color.YELLOW)
-//                .setSubmitColor(Color.YELLOW)
-//                .setTextColorCenter(Color.LTGRAY)
                 .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
                 .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
                 .setLabels("", "", "")
                 .setBgColor(0xFFFFFFFF) //设置外部遮罩颜色
-                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
-                    @Override
-                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
-//                        String str = "options1: " + options1 + "\noptions2: " + options2 + "\noptions3: " + options3;
-//                        Toast.makeText(StorageActivity.this, str, Toast.LENGTH_SHORT).show();
-                    }
-                })
                 .build();
 
-//        pvOptions.setSelectOptions(1,1);
         pvStock.setPicker(stocks);//一级选择器
-//        pvCustom.setPicker(options1Items, options2Items);//二级选择器
-        /*pvOptions.setPicker(options1Items, options2Items,options3Items);//三级选择器*/
         Dialog mDialog = pvStock.getDialog();
         if (mDialog != null) {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
@@ -873,7 +852,6 @@ public class OutputDetailActivity extends AppCompatActivity {
         params.add(new NetParams("iBscDataCustomerRecNo", customerid + ""));
         params.add(new NetParams("dDate", tvDate.getText().toString()));
         params.add(new NetParams("sRemark", etRemark.getText().toString()));
-//        params.add(new NetParams("sUserID", (String) preferencesHelper.getSharedPreference("userid", "")));
         params.add(new NetParams("sUserID", "master"));
         params.add(new NetParams("iSumbit", isSubmit + ""));
         params.add(new NetParams("otype", "MMProductSave"));
@@ -881,7 +859,6 @@ public class OutputDetailActivity extends AppCompatActivity {
             params.add(new NetParams("iSDSendMRecNo", ""));
         else
             params.add(new NetParams("iSDSendMRecNo", noticeid + ""));
-//        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
 
         return params;
     }
@@ -929,7 +906,6 @@ public class OutputDetailActivity extends AppCompatActivity {
         params.add(new NetParams("iRecNo", mainID + ""));
         params.add(new NetParams("otype", "DeleteProduct"));
 //        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
-
         return params;
     }
 
