@@ -11,8 +11,38 @@ public class StorageScanBean {
     private String sBarCode;
     private String sElements;
     private String sBatchNo;//批次
+    private float fVoltage;//工作电压
+    private float fVoltageResistance;//耐电压
+    private String fResistance;//电阻
+    private String sElectrode;//电极
+    private String fCurrent;//电流
+    private int iQty;//片数
     private float fTC;
     private float fTS;
+
+    public float getfVoltage() {
+        return fVoltage;
+    }
+
+    public float getfVoltageResistance() {
+        return fVoltageResistance;
+    }
+
+    public String getfResistance() {
+        return fResistance;
+    }
+
+    public String getsElectrode() {
+        return sElectrode;
+    }
+
+    public String getfCurrent() {
+        return fCurrent;
+    }
+
+    public int getiQty() {
+        return iQty;
+    }
 
     public String getsElements() {
         return sElements;

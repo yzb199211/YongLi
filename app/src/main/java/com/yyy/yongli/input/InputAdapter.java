@@ -36,7 +36,7 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == 1) {
-            View view = LayoutInflater.from(context).inflate(R.layout.item_scan2, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.item_input, parent, false);
             return new VH(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.item_scan1, parent, false);
@@ -53,11 +53,21 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (list.get(position).getType() == 1) {
                 VH holder = (VH) viewHolder;
                 holder.tvTitle.setText("规格：" + list.get(position).getsElements());
+                holder.tvBatch.setText("批次：" + list.get(position).getsBatchNo());
+
+                holder.tvTS.setText("TS：" + list.get(position).getfTS());
+                holder.tvTC.setText("TC：" + list.get(position).getfTC());
+                holder.tvPos.setText("仓位：" + (TextUtils.isEmpty(list.get(position).getsBerChID()) ? "" : list.get(position).getsBerChID()));
+
+                holder.tvResistance.setText("电阻：" + list.get(position).getfResistance());
+                holder.tvVoltage.setText("工作电压：" + list.get(position).getfVoltage());
+                holder.tvVoltageResistance.setText("耐电压：" + list.get(position).getfVoltageResistance());
+
+                holder.tvCurrent.setText("电流：" + list.get(position).getfCurrent());
+                holder.tvElectrode.setText("电极：" + list.get(position).getsElectrode());
+                holder.tvCount.setText("片数：" + list.get(position).getiQty());
+
                 holder.tvCode.setText("条码：" + list.get(position).getsBarCode());
-                holder.tvSize.setText("TS：" + list.get(position).getfTS());
-                holder.tvColor.setText("TC：" + list.get(position).getfTC());
-                holder.tvCount.setText("仓位：" + (TextUtils.isEmpty(list.get(position).getsBerChID()) ? "" : list.get(position).getsBerChID()));
-                holder.tvPos.setText("批次：" + list.get(position).getsBatchNo());
                 holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -95,22 +105,42 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public static class VH extends RecyclerView.ViewHolder {
         TextView tvTitle;
-        TextView tvColor;
-        TextView tvSize;
-        TextView tvCount;
-        TextView tvCode;
+        TextView tvTC;
+        TextView tvTS;
         TextView tvPos;
+        TextView tvCode;
+        TextView tvBatch;
+        TextView tvResistance;
+        TextView tvVoltage;
+
+        TextView tvVoltageResistance;
+        TextView tvCurrent;
+        TextView tvCount;
+        TextView tvElectrode;
         LinearLayout llOne;
         LinearLayout llTwo;
 
         public VH(View v) {
             super(v);
-            tvCode = v.findViewById(R.id.tv_code);
+
+            tvBatch = v.findViewById(R.id.tv_batch_no);
             tvTitle = v.findViewById(R.id.tv_title);
-            tvColor = v.findViewById(R.id.tv_color);
+
+            tvTC = v.findViewById(R.id.tv_tc);
+            tvPos = v.findViewById(R.id.tv_pos);
+            tvTS = v.findViewById(R.id.tv_ts);
+
+
+            tvVoltage = v.findViewById(R.id.tv_voltage);
+            tvResistance = v.findViewById(R.id.tv_resistance);
+            tvVoltageResistance = v.findViewById(R.id.tv_voltage_resistance);
+
+            tvCurrent = v.findViewById(R.id.tv_current);
+            tvElectrode = v.findViewById(R.id.tv_electrode);
             tvCount = v.findViewById(R.id.tv_count);
-            tvSize = v.findViewById(R.id.tv_size);
-            tvPos = v.findViewById(R.id.tv_stock_pos);
+
+            tvCode = v.findViewById(R.id.tv_code);
+
             llOne = v.findViewById(R.id.ll_one);
             llTwo = v.findViewById(R.id.ll_two);
         }

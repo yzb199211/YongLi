@@ -288,7 +288,7 @@ public class InputAddActivity extends AppCompatActivity {
             if (data.getDataset().getSBarCode().size() > 0) {
                 codes.add(data.getDataset().getSBarCode().get(0).getsBarCode());
                 setCodeView(data.getDataset().getSBarCode());
-
+                FinishLoading(null);
             } else {
                 FinishLoading("无条码数据");
             }
@@ -298,11 +298,12 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void setCodeView(List<StorageScanBean> sBarCode) {
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < sBarCode.size(); i++) {
-                    View view = LayoutInflater.from(InputAddActivity.this).inflate(R.layout.item_scan2, llItem, false);
+                    View view = LayoutInflater.from(InputAddActivity.this).inflate(R.layout.item_input, llItem, false);
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -319,23 +320,55 @@ public class InputAddActivity extends AppCompatActivity {
 
     private View setViewData(View v, StorageScanBean storageScanBean) {
         TextView tvTitle;
-        TextView tvColor;
-        TextView tvSize;
-        TextView tvCount;
-        TextView tvCode;
+        TextView tvTC;
+        TextView tvTS;
         TextView tvPos;
-        tvCode = v.findViewById(R.id.tv_code);
+        TextView tvCode;
+        TextView tvBatch;
+        TextView tvResistance;
+        TextView tvVoltage;
+
+        TextView tvVoltageResistance;
+        TextView tvCurrent;
+        TextView tvCount;
+        TextView tvElectrode;
+
+
+
+        tvBatch = v.findViewById(R.id.tv_batch_no);
         tvTitle = v.findViewById(R.id.tv_title);
-        tvColor = v.findViewById(R.id.tv_color);
+
+        tvTC = v.findViewById(R.id.tv_tc);
+        tvPos = v.findViewById(R.id.tv_pos);
+        tvTS = v.findViewById(R.id.tv_ts);
+
+
+        tvVoltage = v.findViewById(R.id.tv_voltage);
+        tvResistance = v.findViewById(R.id.tv_resistance);
+        tvVoltageResistance = v.findViewById(R.id.tv_voltage_resistance);
+
+        tvCurrent = v.findViewById(R.id.tv_current);
+        tvElectrode = v.findViewById(R.id.tv_electrode);
         tvCount = v.findViewById(R.id.tv_count);
-        tvSize = v.findViewById(R.id.tv_size);
-        tvPos = v.findViewById(R.id.tv_stock_pos);
-        tvTitle.setText("规格：" + storageScanBean.getsElements());
-        tvCode.setText("条码：" + storageScanBean.getsBarCode());
-        tvSize.setText("TS：" + storageScanBean.getfTS());
-        tvColor.setText("TC：" + storageScanBean.getfTC());
-        tvCount.setText("仓位：" + (TextUtils.isEmpty(storageScanBean.getsBerChID()) ? "" : storageScanBean.getsBerChID()));
-        tvPos.setText("批次：" + storageScanBean.getsBatchNo());
+
+        tvCode = v.findViewById(R.id.tv_code);
+
+        tvTitle.setText("规格：" +storageScanBean.getsElements());
+        tvBatch.setText("批次：" +storageScanBean.getsBatchNo());
+
+        tvTS.setText("TS：" +storageScanBean.getfTS());
+        tvTC.setText("TC：" +storageScanBean.getfTC());
+        tvPos.setText("仓位：" + (TextUtils.isEmpty(storageScanBean.getsBerChID()) ? "" :storageScanBean.getsBerChID()));
+
+        tvResistance.setText("电阻：" +storageScanBean.getfResistance());
+        tvVoltage.setText("工作电压：" +storageScanBean.getfVoltage());
+        tvVoltageResistance.setText("耐电压：" +storageScanBean.getfVoltageResistance());
+
+        tvCurrent.setText("电流：" +storageScanBean.getfCurrent());
+        tvElectrode.setText("电极：" +storageScanBean.getsElectrode());
+        tvCount.setText("片数：" +storageScanBean.getiQty());
+
+        tvCode.setText("条码：" +storageScanBean.getsBarCode());
         return v;
     }
 
@@ -352,7 +385,13 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void judgeSendData() {
-        clearData();
+        if (codes.size()==2&&StringUtil.isNotEmpty(bigCode)){
+            clearData();
+            sendData();
+        }
+    }
+
+    private void sendData() {
         LoadingDialog.showDialogForLoading(this);
         new NetUtil(sendDataParams(), url, new ResponseListener() {
             @Override
@@ -604,7 +643,6 @@ public class InputAddActivity extends AppCompatActivity {
                 LoadingDialog.cancelDialogForLoading();
                 if (StringUtil.isNotEmpty(msg)) {
                     Toasts.showShort(InputAddActivity.this, msg);
-
                 }
             }
         });
