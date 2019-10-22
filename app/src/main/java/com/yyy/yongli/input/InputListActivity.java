@@ -1,6 +1,7 @@
 package com.yyy.yongli.input;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,13 +48,15 @@ public class InputListActivity extends AppCompatActivity {
     ImageView ivRight;
     @BindView(R.id.rv_item)
     XRecyclerView rvItem;
+    @BindView(R.id.tv_count)
+    TextView tvCount;
 
     SharedPreferencesHelper preferencesHelper;
 
     String userid;
     String url;
 
-    int page = 1;
+    int page = 0;
     int pageSize = 20;
 
     int storageid;
@@ -75,7 +78,7 @@ public class InputListActivity extends AppCompatActivity {
         getDefaultData();
         initList();
         initView();
-        getData();
+        getData(0);
     }
 
     private void initList() {
@@ -86,56 +89,85 @@ public class InputListActivity extends AppCompatActivity {
         List<NetParams> params = new ArrayList<>();
         params.add(new NetParams("otype", "GetToDayProductInList"));
         params.add(new NetParams("iBscDataStockMRecNo", storageid + ""));
-        params.add(new NetParams("page", page + ""));
+        params.add(new NetParams("page", page + 1 + ""));
         params.add(new NetParams("pageSize", pageSize + ""));
         return params;
     }
 
-    private void getData() {
+    private void getData(int type) {
+        LoadingDialog.showDialogForLoading(this);
         new NetUtil(getParams(), url, new ResponseListener() {
             @Override
-            public void onSuccess(String string) {
+            public void onSuccess(String string) {Log.e("data",string);
+            Log.e("data",storageid+"");
                 try {
                     JSONObject jsonObject = new JSONObject(string);
-                    isSuccess(jsonObject);
+                    isSuccess(jsonObject, type);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    FinishLoading(e.getMessage());
+                    FinishLoading(e.getMessage(), type);
                 }
             }
 
             @Override
             public void onFail(IOException e) {
                 e.printStackTrace();
-                FinishLoading(e.getMessage());
+                FinishLoading(e.getMessage(), type);
             }
         });
     }
 
-    private void isSuccess(JSONObject jsonObject) {
+    private void isSuccess(JSONObject jsonObject, int type) {
         if (jsonObject.optBoolean("success")) {
             initData(jsonObject.optJSONObject("dataset").optString("ProductInList"));
+            setSum(jsonObject.optString("iSumQty"));
+            FinishLoading(null, type);
         } else {
-            FinishLoading(jsonObject.optString("message"));
+            FinishLoading(jsonObject.optString("message"), type);
         }
     }
 
+    private void setSum(String s) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvCount.setText("今日入库片数：" + s);
+            }
+        });
+    }
+
     private void initData(String optString) {
+
         List<StorageScanBean> list = new Gson().fromJson(optString, new TypeToken<List<StorageScanBean>>() {
         }.getType());
         if (list.size() > 0) {
+            page = page + 1;
             datas.addAll(list);
+
             refreshList();
+        }else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    rvItem.setLoadingMoreEnabled(false);
+                }
+            });
         }
     }
 
     private void refreshList() {
-        if (mAdapter == null) {
-            mAdapter = new InputAdapter(this, datas);
-            rvItem.setAdapter(mAdapter);
-        } else {
-            mAdapter.notifyDataSetChanged();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mAdapter == null) {
+                    mAdapter = new InputAdapter(InputListActivity.this, datas);
+                    rvItem.setAdapter(mAdapter);
+                } else {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
     }
 
 
@@ -153,8 +185,8 @@ public class InputListActivity extends AppCompatActivity {
 
     private void initRecycle() {
         rvItem.setLayoutManager(new LinearLayoutManager(this));
-        rvItem.setLoadingMoreEnabled(false);
-        rvItem.setPullRefreshEnabled(false);
+        rvItem.setLoadingMoreEnabled(true);
+        rvItem.setPullRefreshEnabled(true);
         rvItem.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         rvItem.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
         rvItem.setArrowImageView(R.mipmap.iconfont_downgrey);
@@ -168,12 +200,17 @@ public class InputListActivity extends AppCompatActivity {
         rvItem.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-
+                rvItem.setLoadingMoreEnabled(true);
+                page = 0;
+                tvCount.setText("今日入库片数：0");
+                datas.clear();
+                refreshList();
+                getData(1);
             }
 
             @Override
             public void onLoadMore() {
-
+                getData(2);
             }
         });
     }
@@ -183,11 +220,15 @@ public class InputListActivity extends AppCompatActivity {
         finish();
     }
 
-    private void FinishLoading(@NonNull String msg) {
+    private void FinishLoading(@NonNull String msg, int type) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 LoadingDialog.cancelDialogForLoading();
+                if (type == 1)
+                    rvItem.refreshComplete();
+                if (type == 2)
+                    rvItem.loadMoreComplete();
                 if (StringUtil.isNotEmpty(msg)) {
                     Toasts.showShort(InputListActivity.this, msg);
 

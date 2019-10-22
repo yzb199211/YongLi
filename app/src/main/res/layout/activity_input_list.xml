@@ -10,6 +10,18 @@
 
     <include layout="@layout/top_layout" />
 
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_1"
+        android:background="@color/white"
+        android:padding="@dimen/dp_10"
+        android:text="今日入库片数：0"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16"
+        android:textStyle="bold"/>
+
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/rv_item"
         android:layout_width="match_parent"

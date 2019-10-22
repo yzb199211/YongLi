@@ -129,7 +129,8 @@ public class InputAddActivity extends AppCompatActivity {
 
     private void initView() {
         tvTitle.setText("入库单");
-        ivRight.setVisibility(View.VISIBLE);
+        ivRight.setVisibility(View.GONE);
+        tvRight.setVisibility(View.VISIBLE);
         tvRight.setText("今日入库");
         initStorageSelect();
         initPosSelect();
@@ -202,6 +203,7 @@ public class InputAddActivity extends AppCompatActivity {
             } else {
                 judgeSend(text);
             }
+            etCode.setContent("");
         } else {
             Toasts.showShort(this, "错误条码");
         }
@@ -210,15 +212,19 @@ public class InputAddActivity extends AppCompatActivity {
     private void judgeSend(String code) {
         if (code.length() == 10) {
             setBigCode(code);
+        } else if (code.length() == 9) {
+            getCodeData(code);
         }
-        getCodeData(code);
+
+
     }
 
 
     private void setBigCode(String code) {
         bigCode = code;
         tvBarcode.setVisibility(View.VISIBLE);
-        tvBarcode.setTitle(code);
+        tvBarcode.setTitle("大条码：");
+        tvBarcode.setContent(code);
     }
 
     private void setRedListener() {
@@ -254,6 +260,10 @@ public class InputAddActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.tv_right:
+                if (storageId == 0) {
+                    Toasts.showShort(InputAddActivity.this, "请选择仓库");
+                    return;
+                }
                 goActivity();
                 break;
         }
@@ -385,12 +395,13 @@ public class InputAddActivity extends AppCompatActivity {
 
     private void judgeSendData() {
         if (codes.size() == 2 && StringUtil.isNotEmpty(bigCode)) {
-            clearData();
             sendData();
+            clearData();
         }
     }
 
     private void sendData() {
+        FinishLoading(null);
         LoadingDialog.showDialogForLoading(this);
         new NetUtil(sendDataParams(), url, new ResponseListener() {
             @Override
@@ -398,10 +409,13 @@ public class InputAddActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(string);
                     if (jsonObject.optBoolean("success")) {
+
                         FinishLoading("入库成功");
+
                     } else {
                         FinishLoading(jsonObject.optString("message"));
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     FinishLoading(e.getMessage());
@@ -427,6 +441,7 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void sendRedData(String code) {
+        removeView();
         LoadingDialog.showDialogForLoading(this);
         new NetUtil(getRedParams(code), url, new ResponseListener() {
             @Override
@@ -434,6 +449,9 @@ public class InputAddActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(string);
                     if (jsonObject.optBoolean("success")) {
+                        List<StorageScanBean> list = new Gson().fromJson(jsonObject.optJSONObject("dataset").optString("BarCodeRed"), new TypeToken<List<StorageScanBean>>() {
+                        }.getType());
+                        setCodeView(list);
                         FinishLoading("红冲成功");
                     } else {
                         FinishLoading(jsonObject.optString("message"));
@@ -632,7 +650,7 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void goActivity() {
-        startActivity(new Intent().setClass(this, InputAddActivity.class));
+        startActivity(new Intent().setClass(this, InputListActivity.class).putExtra("storageid", storageId));
     }
 
     private void FinishLoading(@NonNull String msg) {
