@@ -10,7 +10,10 @@ public class StorageScanBean {
     private String sStyleNo;
     private String sBarCode;
     private String sElements;
+    private String sInBarCode;//大条码
+    private String sOrderNo;//订单号
     private String sBatchNo;//批次
+    private float fAdjustTS;//TS±
     private float fVoltage;//工作电压
     private float fVoltageResistance;//耐电压
     private String fResistance;//电阻
@@ -19,6 +22,18 @@ public class StorageScanBean {
     private int iQty;//片数
     private float fTC;
     private float fTS;
+
+    public String getsInBarCode() {
+        return sInBarCode;
+    }
+
+    public String getsOrderNo() {
+        return sOrderNo;
+    }
+
+    public float getfAdjustTS() {
+        return fAdjustTS;
+    }
 
     public float getfVoltage() {
         return fVoltage;

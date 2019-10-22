@@ -67,7 +67,12 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 holder.tvElectrode.setText("电极：" + list.get(position).getsElectrode());
                 holder.tvCount.setText("片数：" + list.get(position).getiQty());
 
-                holder.tvCode.setText("条码：" + list.get(position).getsBarCode());
+                holder.tvCode.setText("大条码：" + list.get(position).getsInBarCode());
+                holder.tvSmallCode.setText("小条码：" + list.get(position).getsBarCode());
+                holder.tvOrder.setText("订单号：" + list.get(position).getsOrderNo());
+                holder.tvAdajustTs.setText("TS±：" + list.get(position).getfAdjustTS());
+
+
                 holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -117,6 +122,10 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView tvCurrent;
         TextView tvCount;
         TextView tvElectrode;
+
+        TextView tvOrder;
+        TextView tvSmallCode;
+        TextView tvAdajustTs;
         LinearLayout llOne;
         LinearLayout llTwo;
 
@@ -126,8 +135,11 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvBatch = v.findViewById(R.id.tv_batch_no);
             tvTitle = v.findViewById(R.id.tv_title);
 
-            tvTC = v.findViewById(R.id.tv_tc);
+            tvSmallCode = v.findViewById(R.id.tv_small_code);
             tvPos = v.findViewById(R.id.tv_pos);
+
+            tvTC = v.findViewById(R.id.tv_tc);
+            tvAdajustTs = v.findViewById(R.id.tv_ts_adjuset);
             tvTS = v.findViewById(R.id.tv_ts);
 
 
@@ -140,6 +152,9 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvCount = v.findViewById(R.id.tv_count);
 
             tvCode = v.findViewById(R.id.tv_code);
+
+            tvOrder = v.findViewById(R.id.tv_order);
+
 
             llOne = v.findViewById(R.id.ll_one);
             llTwo = v.findViewById(R.id.ll_two);

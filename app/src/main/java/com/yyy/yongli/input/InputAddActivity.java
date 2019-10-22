@@ -129,7 +129,7 @@ public class InputAddActivity extends AppCompatActivity {
 
     private void initView() {
         tvTitle.setText("入库单");
-        ivRight.setVisibility(View.GONE);
+        ivRight.setVisibility(View.VISIBLE);
         tvRight.setText("今日入库");
         initStorageSelect();
         initPosSelect();
@@ -303,7 +303,7 @@ public class InputAddActivity extends AppCompatActivity {
             @Override
             public void run() {
                 for (int i = 0; i < sBarCode.size(); i++) {
-                    View view = LayoutInflater.from(InputAddActivity.this).inflate(R.layout.item_input, llItem, false);
+                    View view = LayoutInflater.from(InputAddActivity.this).inflate(R.layout.item_scan_new, llItem, false);
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -334,7 +334,6 @@ public class InputAddActivity extends AppCompatActivity {
         TextView tvElectrode;
 
 
-
         tvBatch = v.findViewById(R.id.tv_batch_no);
         tvTitle = v.findViewById(R.id.tv_title);
 
@@ -353,22 +352,22 @@ public class InputAddActivity extends AppCompatActivity {
 
         tvCode = v.findViewById(R.id.tv_code);
 
-        tvTitle.setText("规格：" +storageScanBean.getsElements());
-        tvBatch.setText("批次：" +storageScanBean.getsBatchNo());
+        tvTitle.setText("规格：" + storageScanBean.getsElements());
+        tvBatch.setText("批次：" + storageScanBean.getsBatchNo());
 
-        tvTS.setText("TS：" +storageScanBean.getfTS());
-        tvTC.setText("TC：" +storageScanBean.getfTC());
-        tvPos.setText("仓位：" + (TextUtils.isEmpty(storageScanBean.getsBerChID()) ? "" :storageScanBean.getsBerChID()));
+        tvTS.setText("TS：" + storageScanBean.getfTS());
+        tvTC.setText("TC：" + storageScanBean.getfTC());
+        tvPos.setText("仓位：" + (TextUtils.isEmpty(storageScanBean.getsBerChID()) ? "" : storageScanBean.getsBerChID()));
 
-        tvResistance.setText("电阻：" +storageScanBean.getfResistance());
-        tvVoltage.setText("工作电压：" +storageScanBean.getfVoltage());
-        tvVoltageResistance.setText("耐电压：" +storageScanBean.getfVoltageResistance());
+        tvResistance.setText("电阻：" + storageScanBean.getfResistance());
+        tvVoltage.setText("工作电压：" + storageScanBean.getfVoltage());
+        tvVoltageResistance.setText("耐电压：" + storageScanBean.getfVoltageResistance());
 
-        tvCurrent.setText("电流：" +storageScanBean.getfCurrent());
-        tvElectrode.setText("电极：" +storageScanBean.getsElectrode());
-        tvCount.setText("片数：" +storageScanBean.getiQty());
+        tvCurrent.setText("电流：" + storageScanBean.getfCurrent());
+        tvElectrode.setText("电极：" + storageScanBean.getsElectrode());
+        tvCount.setText("片数：" + storageScanBean.getiQty());
 
-        tvCode.setText("条码：" +storageScanBean.getsBarCode());
+        tvCode.setText("条码：" + storageScanBean.getsBarCode());
         return v;
     }
 
@@ -385,7 +384,7 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void judgeSendData() {
-        if (codes.size()==2&&StringUtil.isNotEmpty(bigCode)){
+        if (codes.size() == 2 && StringUtil.isNotEmpty(bigCode)) {
             clearData();
             sendData();
         }
