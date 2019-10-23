@@ -137,7 +137,8 @@ public class Scan2Activity extends AppCompatActivity {
 //        if (StringUtil.isNotEmpty(head)) {
 //            url = head + "/" + NetConfig.Pda_Method;
 //        }
-        url = NetConfig.url + NetConfig.Pda_Method;
+//        url = NetConfig.url + NetConfig.Pda_Method;
+        url=  (String) preferencesHelper.getSharedPreference("url", "")+ NetConfig.Pda_Method;
 
         products = new ArrayList<>();
         stockPosBeans = new ArrayList<>();

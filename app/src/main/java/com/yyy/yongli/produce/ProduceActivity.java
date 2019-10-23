@@ -32,6 +32,7 @@ import com.yyy.yongli.util.NetConfig;
 import com.yyy.yongli.util.NetParams;
 import com.yyy.yongli.util.NetUtil;
 import com.yyy.yongli.util.PxUtil;
+import com.yyy.yongli.util.SharedPreferencesHelper;
 import com.yyy.yongli.util.StringUtil;
 import com.yyy.yongli.util.Toasts;
 import com.yyy.yongli.view.EditItem;
@@ -108,16 +109,20 @@ public class ProduceActivity extends AppCompatActivity {
     List<Items> items = new ArrayList<>();
 
     boolean isLoading = false;
-
+String url;
+SharedPreferencesHelper preferencesHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_produce);
         ButterKnife.bind(this);
+        preferencesHelper = new SharedPreferencesHelper(this,getString(R.string.preferenceCache));
         init();
     }
 
     private void init() {
+        url=  (String) preferencesHelper.getSharedPreference("url", "")+ NetConfig.Produce_Method;
+
         ivRight.setVisibility(View.GONE);
         tvRight.setText("提交");
         tvRight.setVisibility(View.VISIBLE);
@@ -223,7 +228,7 @@ public class ProduceActivity extends AppCompatActivity {
     private void getData() {
         LoadingDialog.cancelDialogForLoading();
         isLoading = true;
-        new NetUtil(getParams(), NetConfig.url + NetConfig.Produce_Method, new ResponseListener() {
+        new NetUtil(getParams(), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
 
@@ -413,7 +418,7 @@ public class ProduceActivity extends AppCompatActivity {
     private void getCodeDetail() {
         LoadingDialog.showDialogForLoading(this);
         isLoading = true;
-        new NetUtil(getCodeParams(), NetConfig.url + NetConfig.Produce_Method, new ResponseListener() {
+        new NetUtil(getCodeParams(), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
                 try {
@@ -577,7 +582,7 @@ public class ProduceActivity extends AppCompatActivity {
         }
         LoadingDialog.showDialogForLoading(this);
         isLoading = true;
-        new NetUtil(getSendParam(), NetConfig.url + NetConfig.Produce_Method, new ResponseListener() {
+        new NetUtil(getSendParam(), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
                 Log.e("data", string);

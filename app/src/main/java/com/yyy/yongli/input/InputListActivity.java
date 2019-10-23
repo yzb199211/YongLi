@@ -19,6 +19,7 @@ import com.yyy.yongli.dialog.LoadingDialog;
 import com.yyy.yongli.interfaces.ResponseListener;
 import com.yyy.yongli.model.StorageScan;
 import com.yyy.yongli.model.StorageScanBean;
+import com.yyy.yongli.util.NetConfig;
 import com.yyy.yongli.util.NetParams;
 import com.yyy.yongli.util.NetUtil;
 import com.yyy.yongli.util.SharedPreferencesHelper;
@@ -174,7 +175,8 @@ public class InputListActivity extends AppCompatActivity {
     private void getDefaultData() {
         userid = (String) preferencesHelper.getSharedPreference("userid", "");
         storageid = getIntent().getIntExtra("storageid", 0);
-        url = "http://36.22.188.50:8090/MobileServerNew/MobilePDAHandler.ashx";
+//        url = "http://36.22.188.50:8090/MobileServerNew/MobilePDAHandler.ashx";
+        url=  (String) preferencesHelper.getSharedPreference("url", "")+ NetConfig.Pda_Method;
     }
 
     private void initView() {

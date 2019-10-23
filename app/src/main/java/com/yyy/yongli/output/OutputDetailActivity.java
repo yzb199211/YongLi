@@ -146,7 +146,8 @@ public class OutputDetailActivity extends AppCompatActivity {
 //        if (StringUtil.isNotEmpty(head)) {
 //            url = head + "/" + NetConfig.Pda_Method;
 //        }
-        url = NetConfig.url + NetConfig.Pda_Method;
+//        url = NetConfig.url + NetConfig.Pda_Method;
+        url=  (String) preferencesHelper.getSharedPreference("url", "")+ NetConfig.Pda_Method;
         tvTitle.setText("出库单");
         ivRight.setVisibility(View.GONE);
         customers = new ArrayList<>();

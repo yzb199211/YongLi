@@ -72,7 +72,8 @@ public class TotalListActivity extends Activity {
 //        if (StringUtil.isNotEmpty(head)) {
 //            url = head + "/" + NetConfig.Pda_Method;
 //        }
-        url = NetConfig.url + NetConfig.Pda_Method;
+//        url = NetConfig.url + NetConfig.Pda_Method;
+        url=  (String) preferencesHelper.getSharedPreference("url", "")+ NetConfig.Pda_Method;
 
         list = new ArrayList<>();
         tvTitle.setText("盘点单");

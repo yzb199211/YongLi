@@ -40,6 +40,7 @@ import com.yyy.yongli.model.StorageStockPosBean;
 import com.yyy.yongli.pick.builder.OptionsPickerBuilder;
 import com.yyy.yongli.pick.listener.OnOptionsSelectListener;
 import com.yyy.yongli.pick.view.OptionsPickerView;
+import com.yyy.yongli.util.NetConfig;
 import com.yyy.yongli.util.NetParams;
 import com.yyy.yongli.util.NetUtil;
 import com.yyy.yongli.util.SharedPreferencesHelper;
@@ -261,7 +262,8 @@ public class InputAddActivity extends AppCompatActivity {
 
     private void getDefaultData() {
         userid = (String) preferencesHelper.getSharedPreference("userid", "");
-        url = "http://36.22.188.50:8090/MobileServerNew/MobilePDAHandler.ashx";
+//        url = "http://36.22.188.50:8090/MobileServerNew/MobilePDAHandler.ashx";
+        url = (String) preferencesHelper.getSharedPreference("url", "") + NetConfig.Pda_Method;
     }
 
     @OnClick({R.id.iv_back, R.id.tv_right, R.id.tv_clear})
@@ -496,6 +498,7 @@ public class InputAddActivity extends AppCompatActivity {
 
     private void getData() {
         LoadingDialog.showDialogForLoading(this);
+        Log.e(url, url);
         new NetUtil(getParams(), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
@@ -707,6 +710,7 @@ public class InputAddActivity extends AppCompatActivity {
 
         return super.onKeyUp(keyCode, event);
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
         try {

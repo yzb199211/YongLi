@@ -71,7 +71,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         preferencesHelper = new SharedPreferencesHelper(this, getString(R.string.preferenceCache));
-        istext = true;
+        istext = false;
         initView();
     }
 
@@ -128,33 +128,26 @@ public class LoginActivity extends BaseActivity {
      * 判断url,用户名和密码是否为空
      */
     private void isNone() throws Exception {
-        haveUrl();
-        url = setUrl();
-        haveName();
-        getContact();
-    }
 
-    private void haveUrl() {
+        url = setUrl();
         if (TextUtils.isEmpty(getUrl())) {
             Toasts.showShort(LoginActivity.this, "请扫描二维码");
             return;
         }
-
+        if (TextUtils.isEmpty(userid)) {
+            Toasts.showShort(LoginActivity.this, "请输入用户名");
+            return;
+        }
+        getContact();
     }
+
 
     private String getUrl() {
         return (String) preferencesHelper.getSharedPreference("url", "");
     }
 
     private String setUrl() {
-        return getUrl() + "/" + NetConfig.Login_Method;
-    }
-
-    private void haveName() {
-        if (TextUtils.isEmpty(userid)) {
-            Toasts.showShort(LoginActivity.this, "请输入用户名");
-            return;
-        }
+        return getUrl() + NetConfig.Login_Method;
     }
 
     /**
@@ -162,7 +155,7 @@ public class LoginActivity extends BaseActivity {
      */
     private void getContact() {
         LoadingDialog.showDialogForLoading(this);
-        Log.e("url", url);
+//        Log.e("url", url);
         new NetUtil(getParams(), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
@@ -294,14 +287,16 @@ public class LoginActivity extends BaseActivity {
         // 扫描二维码返回值
         if (requestCode == REQUEST_CODE_SCAN && resultCode == RESULT_OK) {
             if (data != null) {
+
                 String content = data.getStringExtra(Constant.CODED_CONTENT);
+                Log.e("data", content);
                 try {
                     JSONObject jsonObject = new JSONObject(content);
                     String url = jsonObject.getString("ServerAddr");
-                    String db = jsonObject.getString("sCompanyCode");
-                    preferencesHelper.put("url", url + "/MobileServer");
-                    preferencesHelper.put("db", db);
-                    Log.e(TAG, (String) preferencesHelper.getSharedPreference("url", "") + "," + db);
+//                    String db = jsonObject.getString("sCompanyCode");
+                    preferencesHelper.put("url", url + "/MobileServerNew/");
+//                    preferencesHelper.put("db", db);
+                    Log.e(TAG, (String) preferencesHelper.getSharedPreference("url", "") );
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
