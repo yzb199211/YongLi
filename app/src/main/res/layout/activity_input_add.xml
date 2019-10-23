@@ -68,18 +68,40 @@
                 android:paddingRight="@dimen/dp_10"
                 android:visibility="gone" />
 
-            <com.yyy.yongli.view.EditItem
-                android:id="@+id/et_code"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_1"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10" />
+                android:orientation="horizontal">
+
+                <com.yyy.yongli.view.EditItem
+                    android:id="@+id/et_code"
+                    android:layout_width="@dimen/dp_0"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10" />
+
+                <TextView
+                    android:id="@+id/tv_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_1"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/dp_10"
+                    android:text="清空"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/sp_14" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/ll_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_1"
                 android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>

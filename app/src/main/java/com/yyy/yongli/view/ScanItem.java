@@ -5,6 +5,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,7 +128,7 @@ public class ScanItem extends FrameLayout {
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (onEntryListener != null) {
                         onEntryListener.onEntry(v);
-//                        Log.e("event", "entry");
+
                     }
                 }
                 return false;

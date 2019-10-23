@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -212,11 +213,20 @@ public class InputAddActivity extends AppCompatActivity {
     private void judgeSend(String code) {
         if (code.length() == 10) {
             setBigCode(code);
-        } else if (code.length() == 9) {
+        } else if (code.length() == 9 && !sumcode(code) && codes.size() < 2) {
             getCodeData(code);
         }
 
 
+    }
+
+    private boolean sumcode(String code) {
+        for (int i = 0; i < codes.size(); i++) {
+            if (code.equals(codes.get(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -225,6 +235,7 @@ public class InputAddActivity extends AppCompatActivity {
         tvBarcode.setVisibility(View.VISIBLE);
         tvBarcode.setTitle("大条码：");
         tvBarcode.setContent(code);
+        judgeSendData();
     }
 
     private void setRedListener() {
@@ -253,7 +264,7 @@ public class InputAddActivity extends AppCompatActivity {
         url = "http://36.22.188.50:8090/MobileServerNew/MobilePDAHandler.ashx";
     }
 
-    @OnClick({R.id.iv_back, R.id.tv_right})
+    @OnClick({R.id.iv_back, R.id.tv_right, R.id.tv_clear})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -265,6 +276,11 @@ public class InputAddActivity extends AppCompatActivity {
                     return;
                 }
                 goActivity();
+                break;
+            case R.id.tv_clear:
+                clearData();
+                break;
+            default:
                 break;
         }
     }
@@ -298,7 +314,7 @@ public class InputAddActivity extends AppCompatActivity {
             if (data.getDataset().getSBarCode().size() > 0) {
                 codes.add(data.getDataset().getSBarCode().get(0).getsBarCode());
                 setCodeView(data.getDataset().getSBarCode());
-                FinishLoading(null);
+
             } else {
                 FinishLoading("无条码数据");
             }
@@ -322,7 +338,9 @@ public class InputAddActivity extends AppCompatActivity {
                     });
                     llItem.addView(setViewData(view, sBarCode.get(i)));
                 }
+                FinishLoading(null);
                 judgeSendData();
+
             }
         });
     }
@@ -400,7 +418,7 @@ public class InputAddActivity extends AppCompatActivity {
     }
 
     private void sendData() {
-        FinishLoading(null);
+//        FinishLoading(null);
         LoadingDialog.showDialogForLoading(this);
         new NetUtil(sendDataParams(), url, new ResponseListener() {
             @Override
@@ -663,5 +681,29 @@ public class InputAddActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    boolean isScan = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getScanCode() == 148)
+            isScan = true;
+        return super.onKeyDown(keyCode, event);
+
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        Log.e("up", event.getScanCode() + "," + event.getAction());
+        if (event.getScanCode() == 148 && isScan) {
+            if (storageId == 0) {
+                Toasts.showShort(InputAddActivity.this, "请选择仓库");
+            } else {
+                judgeCode(etCode.getText());
+            }
+        }
+        etCode.setContent("");
+        return super.onKeyUp(keyCode, event);
     }
 }

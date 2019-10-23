@@ -142,7 +142,7 @@ public class OutputScanActivity extends AppCompatActivity {
         stockPosBeans = new ArrayList<>();
         totals = new ArrayList<>();
         showList = new ArrayList<>();
-//        url = NetConfig.url + NetConfig.Pda_Method;
+
         tvTitle.setText("扫描条码");
         ivRight.setVisibility(View.GONE);
         bottomLayout.setVisibility(View.VISIBLE);
@@ -151,14 +151,11 @@ public class OutputScanActivity extends AppCompatActivity {
         tvDelete.setBackgroundResource(R.drawable.bottom_save);
         tvDelete.setVisibility(View.INVISIBLE);
 
-
-//        tvSave.setText("新增");
-//        tvDelete.setVisibility(View.INVISIBLE);
         tvSave.setText("清空");
         tvSave.setBackgroundResource(R.drawable.bottom_delete);
 
         tvSubmit.setText("保存");
-//        tvTotal.setText("数量：0");
+
         Intent intent = getIntent();
         mainID = intent.getIntExtra("mainID", 0);
         stockID = intent.getIntExtra("stockid", 0);
@@ -192,7 +189,6 @@ public class OutputScanActivity extends AppCompatActivity {
                     etCode.clearFocus();
                     code = etCode.getText().toString();
                     if (StringUtil.isNotEmpty(code) && !isLoad) {
-//                        Log.e(TAG, codes.contains(code) + "" + codes.size() + code);
                         if (codes.contains(code) == false) {
                             codes.add(code);
                             getScamData(code);
@@ -220,7 +216,6 @@ public class OutputScanActivity extends AppCompatActivity {
                     String pos = etStockPos.getText().toString();
                     boolean isNone = true;
                     for (int i = 0; i < stockPosBeans.size(); i++) {
-//                        stockPosBeans.get(i).getSBerChID();
                         if (pos.equals(stockPosBeans.get(i).getSBerChID())) {
                             isNone = false;
                             stockSelectedPos = i;
@@ -285,8 +280,6 @@ public class OutputScanActivity extends AppCompatActivity {
         list.add(new NetParams("otype", "GetProductD"));
         list.add(new NetParams("sTableName", tableName));
         list.add(new NetParams("iMainRecNo", mainID + ""));
-//        list.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
-
         return list;
     }
 
@@ -518,10 +511,6 @@ public class OutputScanActivity extends AppCompatActivity {
         pvStockPos = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
-                //返回的分别是三个级别的选中位置
-//                String tx = options1Items.get(options1).getPickerViewText()
-//                        + options2Items.get(options1).get(options2)
-                /* + options3Items.get(options1).get(options2).get(options3).getPickerViewText()*/
                 stockPosID = stockPosBeans.get(options1).getIRecNo();
                 if (stockPosID == 0)
                     tvStovkPos.setText("");
@@ -541,16 +530,12 @@ public class OutputScanActivity extends AppCompatActivity {
                 .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
                     @Override
                     public void onOptionsSelectChanged(int options1, int options2, int options3) {
-//                        String str = "options1: " + options1 + "\noptions2: " + options2 + "\noptions3: " + options3;
-//                        Toast.makeText(StorageActivity.this, str, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .build();
 
 //        pvOptions.setSelectOptions(1,1);
         pvStockPos.setPicker(stockPosBeans);//一级选择器
-//        pvCustom.setPicker(options1Items, options2Items);//二级选择器
-        /*pvOptions.setPicker(options1Items, options2Items,options3Items);//三级选择器*/
         Dialog mDialog = pvStockPos.getDialog();
         if (mDialog != null) {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
@@ -851,6 +836,7 @@ public class OutputScanActivity extends AppCompatActivity {
         params.add(new NetParams("sbarcode", codes));
         params.add(new NetParams("sTableName", tableName));
         params.add(new NetParams("iBscDataStockMRecNo", stockID + ""));
+
         Log.e(TAG, codes);
 //        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
         return params;

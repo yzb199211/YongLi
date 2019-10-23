@@ -83,22 +83,13 @@
         android:orientation="horizontal">
 
 
-        <TextView
-            android:id="@+id/tv_resistance"
-            android:layout_width="@dimen/dp_0"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="@color/default_content_color"
-            android:textSize="@dimen/sp_14" />
+
 
         <TextView
             android:id="@+id/tv_voltage"
             android:layout_width="@dimen/dp_0"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:text=""
@@ -121,7 +112,16 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_25"
         android:orientation="horizontal">
-
+        <TextView
+            android:id="@+id/tv_resistance"
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/default_content_color"
+            android:textSize="@dimen/sp_14" />
         <TextView
             android:id="@+id/tv_electrode"
             android:layout_width="@dimen/dp_0"
@@ -129,7 +129,8 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textColor="@color/default_content_color"
-            android:textSize="@dimen/sp_14" />
+            android:textSize="@dimen/sp_14"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_current"
@@ -138,7 +139,8 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textColor="@color/default_content_color"
-            android:textSize="@dimen/sp_14" />
+            android:textSize="@dimen/sp_14"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_count"
