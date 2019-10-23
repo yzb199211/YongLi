@@ -248,7 +248,7 @@ public class Scan2Activity extends AppCompatActivity {
         new NetUtil(getProductParams(), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
-                Log.e(TAG, string);
+//                Log.e(TAG, string);
                 StorageScan storageScan = new Gson().fromJson(string, StorageScan.class);
                 if (storageScan.isSuccess()) {
                     List<StorageScanBean> list = storageScan.getDataset().getSBarCode();
@@ -697,10 +697,10 @@ public class Scan2Activity extends AppCompatActivity {
         for (int i = 0; i < products.size(); i++) {
             if (i != products.size() - 1)
                 codes = codes + products.get(i).getsBarCode() + ","
-                        + products.get(i).getiBscDataStockDRecNo() + "," + "1" + ";";
+                        + products.get(i).getiBscDataStockDRecNo() + "," + products.get(i).getiQty() + ";";
             else {
                 codes = codes + products.get(i).getsBarCode() + ","
-                        + products.get(i).getiBscDataStockDRecNo() + "," + "1";
+                        + products.get(i).getiBscDataStockDRecNo() + "," + products.get(i).getiQty();
             }
         }
         params.add(new NetParams("data", codes));

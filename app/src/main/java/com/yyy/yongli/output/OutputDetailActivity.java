@@ -21,6 +21,7 @@ import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,6 +45,7 @@ import com.yyy.yongli.pick.listener.OnTimeSelectListener;
 import com.yyy.yongli.pick.view.OptionsPickerView;
 import com.yyy.yongli.pick.view.TimePickerView;
 import com.yyy.yongli.scan.Scan2Activity;
+import com.yyy.yongli.scan.ScanNewActivity;
 import com.yyy.yongli.util.CodeConfig;
 import com.yyy.yongli.util.NetConfig;
 import com.yyy.yongli.util.NetParams;
@@ -256,7 +258,7 @@ public class OutputDetailActivity extends AppCompatActivity {
 
             stocks.addAll(storage.getDataset().getBscDataStockM());
             notices.addAll(storage.getDataset().getSDSendM());
-            notices.add(0, new LookUpBean("", "无", ""));
+//            notices.add(0, new LookUpBean("", "无", ""));
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -316,7 +318,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                 @Override
                 public void onClick(boolean confirm) {
                     if (confirm)
-                        clearChild();
+                        clearChild(null);
                 }
             });
         } else cleanDialog.show();
@@ -425,7 +427,7 @@ public class OutputDetailActivity extends AppCompatActivity {
             if (customerid.equals(notices.get(i).getsClassID()))
                 list.add(notices.get(i));
         }
-        list.add(0, new LookUpBean("", "无", ""));
+//        list.add(0, new LookUpBean("", "无", ""));
         return list;
     }
 
@@ -776,7 +778,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
                     Intent intent = new Intent();
-                    intent.setClass(OutputDetailActivity.this, Scan2Activity.class);
+                    intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
                     intent.putExtra("stockid", stockid);
                     intent.putExtra("mainID", mainID);
                     intent.putExtra("tableName", "MMProductOutD");
@@ -791,7 +793,7 @@ public class OutputDetailActivity extends AppCompatActivity {
 
     private void goAdd() {
         Intent intent = new Intent();
-        intent.setClass(OutputDetailActivity.this, Scan2Activity.class);
+        intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
         intent.putExtra("stockid", stockid);
         intent.putExtra("mainID", mainID);
         intent.putExtra("red", isSelect);
@@ -811,7 +813,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
                     Intent intent = new Intent();
-                    intent.setClass(OutputDetailActivity.this, Scan2Activity.class);
+                    intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
                     intent.putExtra("stockid", stockid);
                     intent.putExtra("mainID", mainID);
                     intent.putExtra("tableName", "MMProductOutD");
@@ -826,7 +828,7 @@ public class OutputDetailActivity extends AppCompatActivity {
 
     private void goScan() {
         Intent intent = new Intent();
-        intent.setClass(OutputDetailActivity.this, Scan2Activity.class);
+        intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
         intent.putExtra("stockid", stockid);
         intent.putExtra("mainID", mainID);
         intent.putExtra("tableName", "MMProductOutD");
@@ -947,16 +949,11 @@ public class OutputDetailActivity extends AppCompatActivity {
                     tvSupplier.setText(data.getStringExtra("name"));
                     break;
                 case NOTICECODE:
-                    noticeid = data.getStringExtra("id");
-                    tvNotice.setText(data.getStringExtra("name"));
-                    customerid = data.getStringExtra("link_id");
-                    if (StringUtil.isNotEmpty(customerid)) {//关联客户信息
-                        for (int i = 0; i < customers.size(); i++) {
-                            if (customerid == customers.get(i).getsCode()) {
-                                tvSupplier.setText(customers.get(i).getsName());
-                                break;
-                            }
-                        }
+                    if (StringUtil.isNotEmpty(noticeid) && !noticeid.equals(data.getStringExtra("id"))) {
+
+                        isChangeNotice(data);
+                    } else {
+                        setNotiveView(data);
                     }
                     break;
                 default:
@@ -964,10 +961,38 @@ public class OutputDetailActivity extends AppCompatActivity {
             }
     }
 
+    JudgeDialog noticeDialog;
+
+    /**
+     * 判断是否更改通知单
+     *
+     * @param data
+     */
+    private void isChangeNotice(Intent data) {
+        if (noticeDialog == null)
+            noticeDialog = new JudgeDialog(this, R.style.JudgeDialog, "变更通知单将清空条码数据是否更改？", new JudgeDialog.OnCloseListener() {
+                @Override
+                public void onClick(boolean confirm) {
+                    if (confirm) {
+                        changeNotice(data);
+                    }
+
+                }
+            });
+        noticeDialog.show();
+    }
+
+    private void changeNotice(Intent data) {
+
+        clearChild(data);
+    }
+
     /**
      * 清空子表数据
+     *
+     * @param data
      */
-    private void clearChild() {
+    private void clearChild(@NonNull Intent data) {
         LoadingDialog.showDialogForLoading(this);
         new NetUtil(clearChildParams(), url, new ResponseListener() {
             @Override
@@ -982,6 +1007,8 @@ public class OutputDetailActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 tvNum.setText("商品数量：0");
+                                if (data != null)
+                                    setNotiveView(data);
                                 loadFail("清空成功");
                             }
                         });
@@ -1000,6 +1027,20 @@ public class OutputDetailActivity extends AppCompatActivity {
                 loadFail("清空失败");
             }
         });
+    }
+
+    private void setNotiveView(Intent data) {
+        noticeid = data.getStringExtra("id");
+        tvNotice.setText(data.getStringExtra("name"));
+        customerid = data.getStringExtra("link_id");
+        if (StringUtil.isNotEmpty(customerid)) {//关联客户信息
+            for (int i = 0; i < customers.size(); i++) {
+                if (customerid == customers.get(i).getsCode()) {
+                    tvSupplier.setText(customers.get(i).getsName());
+                    break;
+                }
+            }
+        }
     }
 
     private List<NetParams> clearChildParams() {

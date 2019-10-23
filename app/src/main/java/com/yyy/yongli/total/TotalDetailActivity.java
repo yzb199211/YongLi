@@ -42,7 +42,7 @@ import com.yyy.yongli.pick.listener.OnTimeSelectChangeListener;
 import com.yyy.yongli.pick.listener.OnTimeSelectListener;
 import com.yyy.yongli.pick.view.OptionsPickerView;
 import com.yyy.yongli.pick.view.TimePickerView;
-import com.yyy.yongli.scan.Scan2Activity;
+import com.yyy.yongli.scan.ScanNewActivity;
 import com.yyy.yongli.util.CodeConfig;
 import com.yyy.yongli.util.NetConfig;
 import com.yyy.yongli.util.NetParams;
@@ -758,7 +758,7 @@ public class TotalDetailActivity extends AppCompatActivity {
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
                     Intent intent = new Intent();
-                    intent.setClass(TotalDetailActivity.this, Scan2Activity.class);
+                    intent.setClass(TotalDetailActivity.this, ScanNewActivity.class);
                     intent.putExtra("stockid", stockid);
                     intent.putExtra("mainID", mainID);
                     intent.putExtra("tableName", "MMProductCheckD");
@@ -773,7 +773,7 @@ public class TotalDetailActivity extends AppCompatActivity {
 
     private void goScan() {
         Intent intent = new Intent();
-        intent.setClass(TotalDetailActivity.this, Scan2Activity.class);
+        intent.setClass(TotalDetailActivity.this, ScanNewActivity.class);
         intent.putExtra("stockid", stockid);
         intent.putExtra("mainID", mainID);
         intent.putExtra("tableName", "MMProductCheckD");
@@ -792,7 +792,7 @@ public class TotalDetailActivity extends AppCompatActivity {
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
                     Intent intent = new Intent();
-                    intent.setClass(TotalDetailActivity.this, Scan2Activity.class);
+                    intent.setClass(TotalDetailActivity.this, ScanNewActivity.class);
                     intent.putExtra("stockid", stockid);
                     intent.putExtra("mainID", mainID);
                     intent.putExtra("tableName", "MMProductCheckD");
@@ -807,7 +807,7 @@ public class TotalDetailActivity extends AppCompatActivity {
 
     private void goAdd() {
         Intent intent = new Intent();
-        intent.setClass(TotalDetailActivity.this, Scan2Activity.class);
+        intent.setClass(TotalDetailActivity.this, ScanNewActivity.class);
         intent.putExtra("stockid", stockid);
         intent.putExtra("mainID", mainID);
         intent.putExtra("tableName", "MMProductCheckD");

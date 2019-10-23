@@ -702,8 +702,19 @@ public class InputAddActivity extends AppCompatActivity {
             } else {
                 judgeCode(etCode.getText());
             }
+            etCode.setContent("");
         }
-        etCode.setContent("");
+
         return super.onKeyUp(keyCode, event);
+    }
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        try {
+            return super.dispatchKeyEvent(e);
+        } catch (Exception ex) {
+            // TODO: handle exception
+            ex.printStackTrace();
+            return false;
+        }
     }
 }

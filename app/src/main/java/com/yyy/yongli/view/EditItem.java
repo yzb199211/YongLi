@@ -109,7 +109,7 @@ public class EditItem extends FrameLayout {
         etContent.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
                     if (onEntryListener != null) {
                         onEntryListener.onEntry(v);
 //                        Log.e("event", "entry");
