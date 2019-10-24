@@ -88,6 +88,13 @@
             android:name=".output.OutputScanActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".exchange2.ExchangeListActivity2"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".exchange2.ExchangeDetailActivity2"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
     </application>
 
 </manifest>

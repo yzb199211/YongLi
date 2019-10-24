@@ -176,7 +176,7 @@ public class InputListActivity extends AppCompatActivity {
         userid = (String) preferencesHelper.getSharedPreference("userid", "");
         storageid = getIntent().getIntExtra("storageid", 0);
 //        url = "http://36.22.188.50:8090/MobileServerNew/MobilePDAHandler.ashx";
-        url=  (String) preferencesHelper.getSharedPreference("url", "")+ NetConfig.Pda_Method;
+        url=  (String) preferencesHelper.getSharedPreference("url", "")+ NetConfig.Produce_Method;
     }
 
     private void initView() {

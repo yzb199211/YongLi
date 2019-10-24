@@ -1,4 +1,4 @@
-package com.yyy.yongli.output;
+package com.yyy.yongli.exchange2;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -21,7 +21,6 @@ import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,7 +29,6 @@ import com.yyy.yongli.R;
 import com.yyy.yongli.dialog.JudgeDialog;
 import com.yyy.yongli.dialog.LoadingDialog;
 import com.yyy.yongli.interfaces.ResponseListener;
-import com.yyy.yongli.lookup.LookUpActivity;
 import com.yyy.yongli.lookup.LookUpBean;
 import com.yyy.yongli.model.Storage;
 import com.yyy.yongli.model.StorageListOrder;
@@ -44,7 +42,6 @@ import com.yyy.yongli.pick.listener.OnTimeSelectChangeListener;
 import com.yyy.yongli.pick.listener.OnTimeSelectListener;
 import com.yyy.yongli.pick.view.OptionsPickerView;
 import com.yyy.yongli.pick.view.TimePickerView;
-import com.yyy.yongli.scan.Scan2Activity;
 import com.yyy.yongli.scan.ScanNewActivity;
 import com.yyy.yongli.util.CodeConfig;
 import com.yyy.yongli.util.NetConfig;
@@ -66,13 +63,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class OutputDetailActivity extends AppCompatActivity {
-    private final static String TAG = "OutputDetailActivity";
+public class ExchangeDetailActivity2 extends AppCompatActivity {
+    private final static String TAG = "ExchangeDetailActivity2";
     private final static int ADDCODE = 100;
     private final static int SUMITCODE = 101;
     private final static int SCANCODE = 102;
-    private final static int CUSTOMERCODE = 103;
-    private final static int NOTICECODE = 104;
     @BindView(R.id.iv_back)
     ImageView ivBack;
     @BindView(R.id.tv_title)
@@ -85,6 +80,10 @@ public class OutputDetailActivity extends AppCompatActivity {
     RelativeLayout rlTop;
     @BindView(R.id.tv_storage)
     TextView tvStorage;
+    @BindView(R.id.tv_storage_in)
+    TextView tvStorageIn;
+    @BindView(R.id.tv_storage_out)
+    TextView tvStorageOut;
     @BindView(R.id.switch_view)
     Switch switchView;
     @BindView(R.id.ll_detial)
@@ -105,25 +104,23 @@ public class OutputDetailActivity extends AppCompatActivity {
     EditText etRemark;
     @BindView(R.id.tv_num)
     TextView tvNum;
-    @BindView(R.id.tv_notice)
-    TextView tvNotice;
-
     String url;
-    List<LookUpBean> customers;//客户列表
-    List<LookUpBean> notices;//通知单列表
-    List<StorageStockMBean> stocks;//仓库列表
+    List<LookUpBean> customers;
+    List<StorageStockMBean> stocks;
 
     private TimePickerView pvTime;
     private OptionsPickerView pvCustom, pvStock;
+    private OptionsPickerView pvStockIn;
+    private OptionsPickerView pvStockOut;
     private JudgeDialog deleteDialog;
-    private JudgeDialog cleanDialog;
     private JudgeDialog submitDialog;
     private JudgeDialog saveDialog;
+    private JudgeDialog cleanDialog;
     int isSelect = 0;//是否红冲
-
-    String customerid = "";
-    int stockid = 0;
-    String noticeid = "";
+    String customerid;
+    int stockid;
+    int stockINid;
+    int stockOUTid;
 
     String selectDate;
     int codeNum = 0;
@@ -134,7 +131,7 @@ public class OutputDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_output_detail);
+        setContentView(R.layout.activity_exchange_detail2);
         ButterKnife.bind(this);
         preferencesHelper = new SharedPreferencesHelper(this, getString(R.string.preferenceCache));
         init();
@@ -142,25 +139,22 @@ public class OutputDetailActivity extends AppCompatActivity {
     }
 
     private void init() {
-//        String head = (String) preferencesHelper.getSharedPreference("url", "");
-//        if (StringUtil.isNotEmpty(head)) {
-//            url = head + "/" + NetConfig.Pda_Method;
-//        }
-//        url = NetConfig.url + NetConfig.Pda_Method;
+
         url = (String) preferencesHelper.getSharedPreference("url", "") + NetConfig.Pda_Method;
-        tvTitle.setText("出库单");
+        tvTitle.setText("调拨单");
         ivRight.setVisibility(View.GONE);
         customers = new ArrayList<>();
         stocks = new ArrayList<>();
-        notices = new ArrayList<>();
+//        url = NetConfig.url + NetConfig.Pda_Method;
         selectDate = StringUtil.getTime();
         tvDate.setText(StringUtil.getTime());
-
         Intent intent = getIntent();
         String data = intent.getStringExtra("data");
+
         if (StringUtil.isNotEmpty(data)) {
             initView(data);
         }
+
         setSwitch();
         getData();
     }
@@ -171,25 +165,26 @@ public class OutputDetailActivity extends AppCompatActivity {
      * @param data
      */
     private void initView(String data) {
+
         StorageListOrder order = new Gson().fromJson(data, StorageListOrder.class);
         mainID = order.getIRecNo();
         selectDate = order.getDDate();
         selectDate = selectDate.substring(0, 10);
         customerid = (order.getIBscDataCustomerRecNo() == 0 ? "" : order.getIBscDataCustomerRecNo() + "");
         stockid = order.getIBscDataStockMRecNo();
+        stockINid = order.getiInBscDataStockMRecno();
+        stockOUTid = order.getiOutBscDataStockMRecno();
         codeNum = order.getIQty();
         isSelect = order.getIRed();
-
-        noticeid = order.getISDSendMRecNo() == 0 ? "" : order.getISDSendMRecNo() + "";
-
         tvDate.setText(selectDate);
         tvSupplier.setText(order.getSCustShortName());
         tvStorage.setText(order.getSStockName());
+        tvStorageIn.setText(order.getsInStockName());
+        tvStorageOut.setText(order.getsOutStockName());
         tvNum.setText("商品数量：" + codeNum);
         etRemark.setText(order.getSReMark());
         if (isSelect == 1)
             switchView.setChecked(true);
-        tvNotice.setText(StringUtil.isNotEmpty(order.getSSdSendNo()) ? order.getSSdSendNo() : "");
     }
 
     /**
@@ -216,7 +211,6 @@ public class OutputDetailActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String string) {
                 try {
-                    Log.e(TAG, string);
                     initData(string);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -224,7 +218,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             LoadingDialog.cancelDialogForLoading();
-                            Toasts.showShort(OutputDetailActivity.this, "加载失败");
+                            Toasts.showShort(ExchangeDetailActivity2.this, "加载失败");
                             setEmpty();
                         }
                     });
@@ -238,7 +232,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         LoadingDialog.cancelDialogForLoading();
-                        Toasts.showShort(OutputDetailActivity.this, "加载失败");
+                        Toasts.showShort(ExchangeDetailActivity2.this, "加载失败");
                         setEmpty();
                     }
                 });
@@ -255,12 +249,9 @@ public class OutputDetailActivity extends AppCompatActivity {
     private void initData(String string) throws Exception {
         Storage storage = new Gson().fromJson(string, Storage.class);
         if (storage.isSuccess()) {
-            customers.addAll(storage.getDataset().getBscDataCustomer());
-
-            stocks.addAll(storage.getDataset().getBscDataStockM());
-            notices.addAll(storage.getDataset().getSDSendM());
-//            notices.add(0, new LookUpBean("", "无", ""));
-
+            customers = storage.getDataset().getBscDataCustomer();
+//            customers.add(0, new StorageCustomerBean(0, "无"));
+            stocks = storage.getDataset().getBscDataStockM();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -273,7 +264,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
-                    Toasts.showShort(OutputDetailActivity.this, storage.getMessage());
+                    Toasts.showShort(ExchangeDetailActivity2.this, storage.getMessage());
                     setEmpty();
                 }
             });
@@ -288,10 +279,11 @@ public class OutputDetailActivity extends AppCompatActivity {
     private List<NetParams> getParams() {
         List<NetParams> params = new ArrayList<>();
         params.add(new NetParams("otype", "GetBscData"));
-        params.add(new NetParams("iType", "2"));
+        params.add(new NetParams("iType", "3"));
 //        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
 
         return params;
+
     }
 
     /**
@@ -319,14 +311,13 @@ public class OutputDetailActivity extends AppCompatActivity {
                 @Override
                 public void onClick(boolean confirm) {
                     if (confirm)
-                        clearChild(null);
+                        clearChild();
                 }
             });
         } else cleanDialog.show();
     }
 
-    @OnClick({R.id.tv_empty, R.id.iv_back, R.id.iv_right2, R.id.iv_right, R.id.tv_storage, R.id.iv_clear, R.id.iv_scan,
-            R.id.iv_add_detail, R.id.tv_supplier, R.id.tv_date, R.id.tv_delete, R.id.tv_save, R.id.tv_submit, R.id.tv_notice})
+    @OnClick({R.id.tv_storage_in, R.id.tv_storage_out, R.id.tv_empty, R.id.iv_back, R.id.iv_right2, R.id.iv_right, R.id.tv_storage, R.id.iv_clear, R.id.iv_scan, R.id.iv_add_detail, R.id.tv_supplier, R.id.tv_date, R.id.tv_delete, R.id.tv_save, R.id.tv_submit})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -344,59 +335,43 @@ public class OutputDetailActivity extends AppCompatActivity {
                     initPvStock();
                 pvStock.show();
                 break;
+            case R.id.tv_storage_in:
+                if (pvStockIn == null)
+                    initPvStockIn();
+                pvStockIn.show();
+                break;
+            case R.id.tv_storage_out:
+                if (pvStockOut == null)
+                    initPvStockOut();
+                pvStockOut.show();
+                break;
             case R.id.iv_clear:
                 isClean();
                 break;
             case R.id.iv_scan:
-                if (stockid != 0) {
+                if (stockINid != 0) {
                     if (mainID == 0)
                         submit(SCANCODE, 0);
                     else {
                         goScan();
                     }
                 } else
-                    Toasts.showShort(OutputDetailActivity.this, "请选择仓库");
+                    Toasts.showShort(ExchangeDetailActivity2.this, "请选择调入仓库");
                 break;
             case R.id.iv_add_detail:
-                if (stockid != 0) {
+                if (stockINid != 0) {
                     if (mainID == 0)
                         submit(ADDCODE, 0);
-                    else
+                    else {
                         goAdd();
+                    }
                 } else
-                    Toasts.showShort(OutputDetailActivity.this, "请选择仓库");
-                break;
-            case R.id.tv_notice:
-                if (TextUtils.isEmpty(customerid)) {
-                    setLookUp(notices, "发货通知单", NOTICECODE);
-//                    Intent intent = new Intent();
-//                    intent.setClass(OutputDetailActivity.this, LookUpActivity.class);
-//                    intent.putExtra("data", new Gson().toJson(notices));
-//                    intent.putExtra("code", NOTICECODE);
-//                    intent.putExtra("title", "发货通知单");
-//                    startActivityForResult(intent, NOTICECODE);
-
-                } else {
-                    setLookUp(selectLookUp(customerid), "发货通知单", NOTICECODE);
-                }
+                    Toasts.showShort(ExchangeDetailActivity2.this, "请选择调入仓库");
                 break;
             case R.id.tv_supplier:
-//                if (pvCustom == null)
-//                    initPvCustomer();
-//                pvCustom.show();
-                try {
-                    if (TextUtils.isEmpty(noticeid)) {
-                        setLookUp(customers, "客户选择", CUSTOMERCODE);
-//                        Intent intent = new Intent();
-//                        intent.setClass(OutputDetailActivity.this, LookUpActivity.class);
-//                        intent.putExtra("data", new Gson().toJson(customers));
-//                        intent.putExtra("code", CUSTOMERCODE);
-//                        intent.putExtra("title", "客户选择");
-//                        startActivityForResult(intent, CUSTOMERCODE);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                if (pvCustom == null)
+                    initPvCustomer();
+                pvCustom.show();
                 break;
             case R.id.tv_date:
                 if (pvTime == null)
@@ -422,25 +397,6 @@ public class OutputDetailActivity extends AppCompatActivity {
         }
     }
 
-    private List<LookUpBean> selectLookUp(String customerid) {
-        List<LookUpBean> list = new ArrayList<>();
-        for (int i = 0; i < notices.size(); i++) {
-            if (customerid.equals(notices.get(i).getsClassID()))
-                list.add(notices.get(i));
-        }
-//        list.add(0, new LookUpBean("", "无", ""));
-        return list;
-    }
-
-    private void setLookUp(List<LookUpBean> list, String title, int code) {
-        Intent intent = new Intent();
-        intent.setClass(OutputDetailActivity.this, LookUpActivity.class);
-        intent.putExtra("data", new Gson().toJson(list));
-        intent.putExtra("code", code);
-        intent.putExtra("title", title);
-        startActivityForResult(intent, code);
-    }
-
     /**
      * 判断是否删除
      */
@@ -460,16 +416,16 @@ public class OutputDetailActivity extends AppCompatActivity {
      * 保存主表信息
      */
     private void save() {
-        if (stockid == 0) {
-            Toasts.showShort(this, "请选择仓库");
+        if (stockINid == 0) {
+            Toasts.showShort(this, "请选择调入仓库");
+            return;
+        }
+        if (stockOUTid == 0) {
+            Toasts.showShort(this, "请选择调出仓库");
             return;
         }
         if (TextUtils.isEmpty(selectDate)) {
-            Toasts.showShort(this, "请选择出库日期");
-            return;
-        }
-        if (TextUtils.isEmpty(tvSupplier.getText().toString())) {
-            Toasts.showShort(this, "请选择客户");
+            Toasts.showShort(this, "请选择盘点日期");
             return;
         }
         isSave();
@@ -495,16 +451,16 @@ public class OutputDetailActivity extends AppCompatActivity {
      * 保存主表信息
      */
     private void submit() {
-        if (stockid == 0) {
-            Toasts.showShort(this, "请选择仓库");
+        if (stockINid == 0) {
+            Toasts.showShort(this, "请选择调入仓库");
+            return;
+        }
+        if (stockOUTid == 0) {
+            Toasts.showShort(this, "请选择调出仓库");
             return;
         }
         if (TextUtils.isEmpty(selectDate)) {
-            Toasts.showShort(this, "请选择出库日期");
-            return;
-        }
-        if (TextUtils.isEmpty(tvSupplier.getText().toString())) {
-            Toasts.showShort(this, "请选择客户");
+            Toasts.showShort(this, "请选择盘点日期");
             return;
         }
         isSubmit();
@@ -654,6 +610,11 @@ public class OutputDetailActivity extends AppCompatActivity {
         pvStock = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+//                String tx = options1Items.get(options1).getPickerViewText()
+//                        + options2Items.get(options1).get(options2)
+                /* + options3Items.get(options1).get(options2).get(options3).getPickerViewText()*/
+                ;
                 tvStorage.setText(stocks.get(options1).getPickerViewText());
                 stockid = stocks.get(options1).getIRecNo();
             }
@@ -663,13 +624,29 @@ public class OutputDetailActivity extends AppCompatActivity {
                 .setDividerColor(Color.LTGRAY)//设置分割线的颜色
                 .setSelectOptions(0)//默认选中项
                 .isDialog(true)
+//                .setBgColor(Color.BLACK)
+//                .setTitleBgColor(Color.DKGRAY)
+//                .setTitleColor(Color.LTGRAY)
+//                .setCancelColor(Color.YELLOW)
+//                .setSubmitColor(Color.YELLOW)
+//                .setTextColorCenter(Color.LTGRAY)
                 .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
                 .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
                 .setLabels("", "", "")
                 .setBgColor(0xFFFFFFFF) //设置外部遮罩颜色
+                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+                    @Override
+                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
+//                        String str = "options1: " + options1 + "\noptions2: " + options2 + "\noptions3: " + options3;
+//                        Toast.makeText(StorageActivity.this, str, Toast.LENGTH_SHORT).show();
+                    }
+                })
                 .build();
 
+//        pvOptions.setSelectOptions(1,1);
         pvStock.setPicker(stocks);//一级选择器
+//        pvCustom.setPicker(options1Items, options2Items);//二级选择器
+        /*pvOptions.setPicker(options1Items, options2Items,options3Items);//三级选择器*/
         Dialog mDialog = pvStock.getDialog();
         if (mDialog != null) {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
@@ -694,26 +671,138 @@ public class OutputDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * 初始化仓库
+     */
+    private void initPvStockIn() {
+
+        pvStockIn= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+//                String tx = options1Items.get(options1).getPickerViewText()
+//                        + options2Items.get(options1).get(options2)
+                /* + options3Items.get(options1).get(options2).get(options3).getPickerViewText()*/
+                ;
+                tvStorageIn.setText(stocks.get(options1).getPickerViewText());
+                stockINid = stocks.get(options1).getIRecNo();
+            }
+        })
+                .setTitleText("仓库选择")
+                .setContentTextSize(18)//设置滚轮文字大小
+                .setDividerColor(Color.LTGRAY)//设置分割线的颜色
+                .setSelectOptions(0)//默认选中项
+                .isDialog(true)
+                .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .setLabels("", "", "")
+                .setBgColor(0xFFFFFFFF) //设置外部遮罩颜色
+                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+                    @Override
+                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
+//
+                    }
+                })
+                .build();
+
+        pvStockIn.setPicker(stocks);//一级选择器
+
+        Dialog mDialog = pvStockIn.getDialog();
+        if (mDialog != null) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM);
+            params.leftMargin = 0;
+            params.rightMargin = 0;
+            pvStockIn.getDialogContainerLayout().setLayoutParams(params);
+            Window dialogWindow = mDialog.getWindow();
+            if (dialogWindow != null) {
+                dialogWindow.setWindowAnimations(R.style.picker_view_slide_anim);//修改动画样式
+                dialogWindow.setGravity(Gravity.BOTTOM);//改成Bottom,底部显示
+                dialogWindow.setDimAmount(0.1f);
+                //当显示只有一列是需要设置window宽度，防止两边有空隙；
+                WindowManager.LayoutParams winParams;
+                winParams = dialogWindow.getAttributes();
+                winParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+                dialogWindow.setAttributes(winParams);
+            }
+        }
+    }
+
+    /**
+     * 初始化仓库
+     */
+    private void initPvStockOut() {
+
+        pvStockOut = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+                tvStorageOut.setText(stocks.get(options1).getPickerViewText());
+                stockOUTid = stocks.get(options1).getIRecNo();
+            }
+        })
+                .setTitleText("仓库选择")
+                .setContentTextSize(18)//设置滚轮文字大小
+                .setDividerColor(Color.LTGRAY)//设置分割线的颜色
+                .setSelectOptions(0)//默认选中项
+                .isDialog(true)
+                .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .setLabels("", "", "")
+                .setBgColor(0xFFFFFFFF) //设置外部遮罩颜色
+                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+                    @Override
+                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
+                    }
+                })
+                .build();
+
+        pvStockOut.setPicker(stocks);//一级选择器
+        Dialog mDialog = pvStockOut.getDialog();
+        if (mDialog != null) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM);
+            params.leftMargin = 0;
+            params.rightMargin = 0;
+            pvStockOut.getDialogContainerLayout().setLayoutParams(params);
+            Window dialogWindow = mDialog.getWindow();
+            if (dialogWindow != null) {
+                dialogWindow.setWindowAnimations(R.style.picker_view_slide_anim);//修改动画样式
+                dialogWindow.setGravity(Gravity.BOTTOM);//改成Bottom,底部显示
+                dialogWindow.setDimAmount(0.1f);
+                //当显示只有一列是需要设置window宽度，防止两边有空隙；
+                WindowManager.LayoutParams winParams;
+                winParams = dialogWindow.getAttributes();
+                winParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+                dialogWindow.setAttributes(winParams);
+            }
+        }
+    }
+
+    /**
      * 提交主表信息
      *
      * @param code
      * @param i
      */
     private void submit(int code, int i) {
-        Log.e("params:", new Gson().toJson(getSubmitParams(i)));
         LoadingDialog.showDialogForLoading(this);
+        Log.e(TAG, new Gson().toJson(getSubmitParams(i)));
         new NetUtil(getSubmitParams(i), url, new ResponseListener() {
             @Override
             public void onSuccess(String string) {
                 Log.e(TAG, string);
                 try {
                     StorageMain storageMain = new Gson().fromJson(string, StorageMain.class);
-                    if (storageMain.isSuccess()) {
-                        if (code == ADDCODE)
-                            goAdd(string);
-                        else if (code == SCANCODE)
+                    if (storageMain.isSuccess() == true) {
+                        if (code == SCANCODE)
                             goScan(string);
-                        else if (code == SUMITCODE && i == 0) {
+                        else if (code == ADDCODE) {
+                            goAdd(string);
+                        } else if (code == SUMITCODE && i == 0) {
                             back("保存成功", 0);
                         } else {
                             back("提交成功", 1);
@@ -747,6 +836,38 @@ public class OutputDetailActivity extends AppCompatActivity {
     }
 
     /**
+     * 提交主表参数
+     *
+     * @param isSubmit
+     * @return
+     */
+    private List<NetParams> getSubmitParams(int isSubmit) {
+        List<NetParams> params = new ArrayList<>();
+        params.add(new NetParams("sTableName", "MMProductDbM"));
+        if (mainID == 0)
+            params.add(new NetParams("iRecNo", ""));
+        else
+            params.add(new NetParams("iRecNo", mainID + ""));
+//        params.add(new NetParams("iBscDataStockMRecNo", stockid + ""));
+        params.add(new NetParams("iInBscDataStockMRecNo", stockINid + ""));
+        params.add(new NetParams("iOutBscDataStockMRecNo", stockOUTid + ""));
+        Log.e("stockid", stockid + "");
+//        params.add(new NetParams("iRed", isSelect + ""));
+        params.add(new NetParams("iQty", codeNum + ""));
+//        params.add(new NetParams("iBscDataCustomerRecNo", customerid + ""));
+        params.add(new NetParams("dDate", tvDate.getText().toString()));
+        params.add(new NetParams("sRemark", etRemark.getText().toString()));
+        params.add(new NetParams("sUserID", "master"));
+//        params.add(new NetParams("sUserID", (String) preferencesHelper.getSharedPreference("userid", "")));
+        params.add(new NetParams("iSumbit", isSubmit + ""));
+        params.add(new NetParams("otype", "MMProductSave"));
+        Log.e("iSumbit", mainID + "");
+//        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
+
+        return params;
+    }
+
+    /**
      * 返回列表
      *
      * @param message
@@ -757,7 +878,7 @@ public class OutputDetailActivity extends AppCompatActivity {
             public void run() {
                 LoadingDialog.cancelDialogForLoading();
                 if (StringUtil.isNotEmpty(message))
-                    Toasts.showShort(OutputDetailActivity.this, message);
+                    Toasts.showShort(ExchangeDetailActivity2.this, message);
                 if (i == 1)
                     setResult(CodeConfig.DELETECODE);
                 else
@@ -765,41 +886,6 @@ public class OutputDetailActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    /**
-     * 开始扫描
-     */
-    private void goAdd(String data) throws Exception {
-        StorageMain storageMain = new Gson().fromJson(data, StorageMain.class);
-        if (storageMain.isSuccess() == true) {
-            mainID = storageMain.getDataset().getResult().get(0).getResult();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    LoadingDialog.cancelDialogForLoading();
-                    Intent intent = new Intent();
-                    intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
-                    intent.putExtra("stockid", stockid);
-                    intent.putExtra("mainID", mainID);
-                    intent.putExtra("tableName", "MMProductOutD");
-                    startActivityForResult(intent, 1);
-                }
-            });
-        } else {
-            loadFail(storageMain.getMessage());
-            Log.e(TAG, storageMain.getMessage());
-        }
-    }
-
-    private void goAdd() {
-        Intent intent = new Intent();
-        intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
-        intent.putExtra("stockid", stockid);
-        intent.putExtra("mainID", mainID);
-        intent.putExtra("red", isSelect);
-        intent.putExtra("tableName", "MMProductOutD");
-        startActivityForResult(intent, 1);
     }
 
     /**
@@ -814,10 +900,10 @@ public class OutputDetailActivity extends AppCompatActivity {
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
                     Intent intent = new Intent();
-                    intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
-                    intent.putExtra("stockid", stockid);
+                    intent.setClass(ExchangeDetailActivity2.this, ScanNewActivity.class);
+                    intent.putExtra("stockid", stockOUTid);
                     intent.putExtra("mainID", mainID);
-                    intent.putExtra("tableName", "MMProductOutD");
+                    intent.putExtra("tableName", "MMProductDbD");
                     startActivityForResult(intent, 1);
                 }
             });
@@ -829,41 +915,45 @@ public class OutputDetailActivity extends AppCompatActivity {
 
     private void goScan() {
         Intent intent = new Intent();
-        intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
-        intent.putExtra("stockid", stockid);
+        intent.setClass(ExchangeDetailActivity2.this, ScanNewActivity.class);
+        intent.putExtra("stockid", stockOUTid);
         intent.putExtra("mainID", mainID);
-        intent.putExtra("tableName", "MMProductOutD");
+        intent.putExtra("tableName", "MMProductDbD");
         startActivityForResult(intent, 1);
     }
 
     /**
-     * 提交主表参数
-     *
-     * @param isSubmit
-     * @return
+     * 开始扫描
      */
-    private List<NetParams> getSubmitParams(int isSubmit) {
-        List<NetParams> params = new ArrayList<>();
-        params.add(new NetParams("sTableName", "MMProductOutM"));
-        if (mainID == 0)
-            params.add(new NetParams("iRecNo", ""));
-        else
-            params.add(new NetParams("iRecNo", mainID + ""));
-        params.add(new NetParams("iBscDataStockMRecNo", stockid + ""));
-        params.add(new NetParams("iRed", isSelect + ""));
-        params.add(new NetParams("iQty", codeNum + ""));
-        params.add(new NetParams("iBscDataCustomerRecNo", customerid + ""));
-        params.add(new NetParams("dDate", tvDate.getText().toString()));
-        params.add(new NetParams("sRemark", etRemark.getText().toString()));
-        params.add(new NetParams("sUserID", "master"));
-        params.add(new NetParams("iSumbit", isSubmit + ""));
-        params.add(new NetParams("otype", "MMProductSave"));
-        if (TextUtils.isEmpty(noticeid))
-            params.add(new NetParams("iSDSendMRecNo", ""));
-        else
-            params.add(new NetParams("iSDSendMRecNo", noticeid + ""));
+    private void goAdd(String data) throws Exception {
+        StorageMain storageMain = new Gson().fromJson(data, StorageMain.class);
+        if (storageMain.isSuccess() == true) {
+            mainID = storageMain.getDataset().getResult().get(0).getResult();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    LoadingDialog.cancelDialogForLoading();
+                    Intent intent = new Intent();
+                    intent.setClass(ExchangeDetailActivity2.this, ScanNewActivity.class);
+                    intent.putExtra("stockid", stockOUTid);
+                    intent.putExtra("mainID", mainID);
+                    intent.putExtra("tableName", "MMProductDbD");
+                    startActivityForResult(intent, 1);
+                }
+            });
+        } else {
+            loadFail(storageMain.getMessage());
+            Log.e(TAG, storageMain.getMessage());
+        }
+    }
 
-        return params;
+    private void goAdd() {
+        Intent intent = new Intent();
+        intent.setClass(ExchangeDetailActivity2.this, ScanNewActivity.class);
+        intent.putExtra("stockid", stockOUTid);
+        intent.putExtra("mainID", mainID);
+        intent.putExtra("tableName", "MMProductDbD");
+        startActivityForResult(intent, 1);
     }
 
     /**
@@ -880,7 +970,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Log.e(TAG, string);
-                            Toasts.showShort(OutputDetailActivity.this, "删除成功");
+                            Toasts.showShort(ExchangeDetailActivity2.this, "删除成功");
                             LoadingDialog.cancelDialogForLoading();
                             setResult(CodeConfig.DELETECODE);
                             finish();
@@ -905,10 +995,11 @@ public class OutputDetailActivity extends AppCompatActivity {
      */
     private List<NetParams> getDeleteParams() {
         List<NetParams> params = new ArrayList<>();
-        params.add(new NetParams("sTableName", "MMProductOutM"));
+        params.add(new NetParams("sTableName", "MMProductDbM"));
         params.add(new NetParams("iRecNo", mainID + ""));
         params.add(new NetParams("otype", "DeleteProduct"));
 //        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
+
         return params;
     }
 
@@ -922,7 +1013,7 @@ public class OutputDetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 LoadingDialog.cancelDialogForLoading();
-                Toasts.showShort(OutputDetailActivity.this, message);
+                Toasts.showShort(ExchangeDetailActivity2.this, message);
             }
         });
     }
@@ -938,62 +1029,16 @@ public class OutputDetailActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        Log.e("resultCode", requestCode + "");
-        if (data != null)
-            switch (resultCode) {
-                case 1:
-                    codeNum = data.getIntExtra("total", 0);
-                    tvNum.setText("商品数量：" + codeNum);
-                    break;
-                case CUSTOMERCODE:
-                    customerid = data.getStringExtra("id");
-                    tvSupplier.setText(data.getStringExtra("name"));
-                    break;
-                case NOTICECODE:
-                    if (StringUtil.isNotEmpty(noticeid) && !noticeid.equals(data.getStringExtra("id"))) {
-
-                        isChangeNotice(data);
-                    } else {
-                        setNotiveView(data);
-                    }
-                    break;
-                default:
-                    break;
-            }
-    }
-
-    JudgeDialog noticeDialog;
-
-    /**
-     * 判断是否更改通知单
-     *
-     * @param data
-     */
-    private void isChangeNotice(Intent data) {
-        if (noticeDialog == null)
-            noticeDialog = new JudgeDialog(this, R.style.JudgeDialog, "变更通知单将清空条码数据是否更改？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm) {
-                        changeNotice(data);
-                    }
-
-                }
-            });
-        noticeDialog.show();
-    }
-
-    private void changeNotice(Intent data) {
-
-        clearChild(data);
+        if (resultCode == 1 && data != null) {
+            codeNum = data.getIntExtra("total", 0);
+            tvNum.setText("商品数量：" + codeNum);
+        }
     }
 
     /**
      * 清空子表数据
-     *
-     * @param data
      */
-    private void clearChild(@NonNull Intent data) {
+    private void clearChild() {
         LoadingDialog.showDialogForLoading(this);
         new NetUtil(clearChildParams(), url, new ResponseListener() {
             @Override
@@ -1008,8 +1053,6 @@ public class OutputDetailActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 tvNum.setText("商品数量：0");
-                                if (data != null)
-                                    setNotiveView(data);
                                 loadFail("清空成功");
                             }
                         });
@@ -1030,28 +1073,15 @@ public class OutputDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void setNotiveView(Intent data) {
-        noticeid = data.getStringExtra("id");
-        tvNotice.setText(data.getStringExtra("name"));
-        customerid = data.getStringExtra("link_id");
-        if (StringUtil.isNotEmpty(customerid)) {//关联客户信息
-            for (int i = 0; i < customers.size(); i++) {
-                if (customerid == customers.get(i).getsCode()) {
-                    tvSupplier.setText(customers.get(i).getsName());
-                    break;
-                }
-            }
-        }
-    }
-
     private List<NetParams> clearChildParams() {
         List<NetParams> params = new ArrayList<>();
         String codes = "";
         params.add(new NetParams("otype", "MMProductDsave"));
-        params.add(new NetParams("sTableName", "MMProductOutD"));
+        params.add(new NetParams("sTableName", "MMProductDbD"));
         params.add(new NetParams("iRecNo", mainID + ""));
         params.add(new NetParams("data", codes));
 //        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
+
         return params;
     }
 }

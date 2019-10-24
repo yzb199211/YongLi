@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yyy.yongli.R;
+import com.yyy.yongli.exchange2.ExchangeListActivity2;
 import com.yyy.yongli.input.InputAddActivity;
 import com.yyy.yongli.interfaces.OnItemClickListener;
 import com.yyy.yongli.output.OutputListActivity;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         list.add(new Menu(2, R.mipmap.icon_output, "出库单"));
         list.add(new Menu(3, R.mipmap.icon_statistics, "盘点单"));
         list.add(new Menu(4, R.mipmap.icon_storage, "入库单"));
+        list.add(new Menu(5, R.mipmap.icon_exchange, "调拨单"));
         menuUsualAdapter = new MenuUsualAdapter(list, this);
         rvMenu.setAdapter(menuUsualAdapter);
         NoScrollGvManager manager = new NoScrollGvManager(this, 4);
@@ -91,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 4:
                 startActivity(intent.setClass(this, InputAddActivity.class));
+                break;
+            case 5:
+                startActivity(intent.setClass(this, ExchangeListActivity2.class));
                 break;
             default:
                 break;

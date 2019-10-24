@@ -14,6 +14,9 @@ public class StorageListOrder {
      * sReMark :
      * iBscDataStockMRecNo : 203
      * iBscDataCustomerRecNo : 1230
+     * iInBscDataStockMRecNo调入仓库
+     * iOutBscDataStockMRecNo调出仓库
+     * sInStockName
      */
 
     private int iRecNo;
@@ -29,6 +32,26 @@ public class StorageListOrder {
     private int iBscDataStockMRecNo;
     private int iBscDataCustomerRecNo;
     private int iSDSendMRecNo;
+    private int iOutBscDataStockMRecno;
+    private int iInBscDataStockMRecno;
+    private String sInStockName;
+    private String sOutStockName;
+
+    public int getiOutBscDataStockMRecno() {
+        return iOutBscDataStockMRecno;
+    }
+
+    public int getiInBscDataStockMRecno() {
+        return iInBscDataStockMRecno;
+    }
+
+    public String getsInStockName() {
+        return sInStockName;
+    }
+
+    public String getsOutStockName() {
+        return sOutStockName;
+    }
 
     public String getSSdSendNo() {
         return sSdSendNo;

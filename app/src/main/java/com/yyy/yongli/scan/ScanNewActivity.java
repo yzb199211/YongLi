@@ -1,10 +1,12 @@
 package com.yyy.yongli.scan;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,10 +18,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.yyy.yongli.R;
+import com.yyy.yongli.dialog.EditDialog;
+import com.yyy.yongli.dialog.JudgeDialog;
 import com.yyy.yongli.dialog.LoadingDialog;
 import com.yyy.yongli.input.InputAdapter;
 import com.yyy.yongli.input.InputAddActivity;
 import com.yyy.yongli.interfaces.OnItemClickListener;
+import com.yyy.yongli.interfaces.OnLongClickListener;
 import com.yyy.yongli.interfaces.ResponseListener;
 import com.yyy.yongli.model.StorageScan;
 import com.yyy.yongli.model.StorageScanBean;
@@ -70,6 +75,7 @@ public class ScanNewActivity extends AppCompatActivity {
     List<StorageScanBean> products;
     Set<String> codes;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +113,7 @@ public class ScanNewActivity extends AppCompatActivity {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((keyCode == KeyEvent.KEYCODE_ENTER || event.getScanCode() == 148) && event.getAction() == KeyEvent.ACTION_UP) {
                     getCodeData(etCode.getText().toString());
+                    etCode.setText("");
                 }
                 return false;
             }
@@ -196,6 +203,7 @@ public class ScanNewActivity extends AppCompatActivity {
         }
     }
 
+    private JudgeDialog deleteDialog;
 
     private void refreshList() {
         Log.d(TAG, products.size() + "");
@@ -212,6 +220,13 @@ public class ScanNewActivity extends AppCompatActivity {
                         @Override
                         public void onItemClick(View view, int position) {
 //                            isDelete(position);
+                            editQty(position);
+                        }
+                    });
+                    mAdapter.setOnLongClickListener(new OnLongClickListener() {
+                        @Override
+                        public void onLongChick(View view, int pos) {
+                            isDelete(pos);
                         }
                     });
                 } else {
@@ -221,6 +236,45 @@ public class ScanNewActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    EditDialog editDialog;
+
+    private void editQty(int pos) {
+        if (editDialog == null) {
+            editDialog = new EditDialog(this, R.style.JudgeDialog, products.get(pos).getiQty(), new EditDialog.OnCloseListener() {
+                @Override
+                public void onClick(boolean confirm, @NonNull String data) {
+                    if (confirm) {
+                        products.get(pos).setiQty(Integer.parseInt(data));
+                        mAdapter.notifyItemChanged(pos);
+                        tvTotal.setText(getTotal(products));
+                    }
+                }
+            }).setTitle("修改" + products.get(pos).getsBarCode() + "片数");
+        }
+        editDialog.show();
+    }
+
+    /**
+     * 判断是否删除
+     *
+     * @param position
+     */
+    private void isDelete(int position) {
+        if (deleteDialog == null)
+            deleteDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否删除？", new JudgeDialog.OnCloseListener() {
+                @Override
+                public void onClick(boolean confirm) {
+                    if (confirm) {
+                        codes.remove(products.get(position).getsBarCode());
+                        products.remove(position);
+                        refreshList();
+                    }
+
+                }
+            });
+        deleteDialog.show();
     }
 
     private String getTotal(List<StorageScanBean> list) {
@@ -250,7 +304,7 @@ public class ScanNewActivity extends AppCompatActivity {
         }
         return barCodes;
     }
-    
+
 
     @OnClick({R.id.iv_back, R.id.tv_clear, R.id.tv_submit})
     public void onViewClicked(View view) {

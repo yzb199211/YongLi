@@ -21,6 +21,8 @@
         android:paddingLeft="@dimen/dp_10"
         android:paddingRight="@dimen/dp_10"
         android:singleLine="true"
+        android:inputType="number"
+        android:digits="1234567890"
         android:textSize="@dimen/sp_14" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -45,7 +47,7 @@
             android:background="@color/white"
             android:clickable="true"
             android:gravity="center"
-            android:text="总片数：2000000"
+            android:text="总片数：0"
             android:textColor="@color/default_text_color" />
 
         <TextView

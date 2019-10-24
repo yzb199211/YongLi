@@ -71,7 +71,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         preferencesHelper = new SharedPreferencesHelper(this, getString(R.string.preferenceCache));
-        istext = false;
+        istext = true;
         initView();
     }
 
@@ -102,12 +102,9 @@ public class LoginActivity extends BaseActivity {
             case R.id.btn_login:
                 try {
                     getText();
-                    if (!istext)
+
                         isNone();
-                    else {
-                        url = NetConfig.url + NetConfig.Login_Method;
-                        getContact();
-                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -143,10 +140,13 @@ public class LoginActivity extends BaseActivity {
 
 
     private String getUrl() {
+        if (istext = true)
+            preferencesHelper.put("url",NetConfig.url);
         return (String) preferencesHelper.getSharedPreference("url", "");
     }
 
     private String setUrl() {
+
         return getUrl() + NetConfig.Login_Method;
     }
 

@@ -58,6 +58,9 @@ public class StorageScanBean {
     public int getiQty() {
         return iQty;
     }
+    public void setiQty(int iQty){
+        this.iQty = iQty;
+    }
 
     public String getsElements() {
         return sElements;

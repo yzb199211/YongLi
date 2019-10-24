@@ -263,7 +263,7 @@ public class InputAddActivity extends AppCompatActivity {
     private void getDefaultData() {
         userid = (String) preferencesHelper.getSharedPreference("userid", "");
 //        url = "http://36.22.188.50:8090/MobileServerNew/MobilePDAHandler.ashx";
-        url = (String) preferencesHelper.getSharedPreference("url", "") + NetConfig.Pda_Method;
+        url = (String) preferencesHelper.getSharedPreference("url", "") + NetConfig.Produce_Method;
     }
 
     @OnClick({R.id.iv_back, R.id.tv_right, R.id.tv_clear})

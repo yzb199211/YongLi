@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yyy.yongli.R;
 import com.yyy.yongli.interfaces.OnItemClickListener;
+import com.yyy.yongli.interfaces.OnLongClickListener;
 import com.yyy.yongli.model.StorageScanBean;
 
 import java.util.List;
@@ -22,6 +23,11 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     Context context;
     List<StorageScanBean> list;
     OnItemClickListener onItemClickListener;
+    OnLongClickListener onLongClickListener;
+
+    public void setOnLongClickListener(OnLongClickListener onLongClickListener) {
+        this.onLongClickListener = onLongClickListener;
+    }
 
     public void setOnItemClickListener(@Nullable OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
@@ -74,6 +80,14 @@ public class InputAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
                 holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        if (onLongClickListener!=null)
+                            onLongClickListener.onLongChick(v,position);
+                        return false;
+                    }
+                });
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
