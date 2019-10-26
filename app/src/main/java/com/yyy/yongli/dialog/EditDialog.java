@@ -138,7 +138,7 @@ public class EditDialog extends Dialog implements View.OnClickListener {
      * @param title
      * @return
      */
-    public EditDialog setTitle(String title) {
+    public EditDialog title(String title) {
         this.title = title;
         return this;
     }
@@ -148,9 +148,19 @@ public class EditDialog extends Dialog implements View.OnClickListener {
      *
      * @return
      */
-    public EditDialog setMax(int max) {
+    public EditDialog max(int max) {
         this.max = max;
         return this;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        tvTitle.setText(title);
+    }
+
+    public void setMax(int max) {
+        this.max = max;
+        etContent.setText(max + "");
     }
 
     /**
@@ -175,16 +185,4 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         return this;
     }
 
-//    public void hintKeyBoard(Context context) {
-//        //拿到InputMethodManager
-//        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//        //如果window上view获取焦点 && view不为空
-//        if (imm.isActive() && getCurrentFocus() != null) {
-//            //拿到view的token 不为空
-//            if (getCurrentFocus().getWindowToken() != null) {
-//                //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
-//                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-//            }
-//        }
-//    }
 }

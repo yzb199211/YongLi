@@ -242,18 +242,23 @@ public class ScanNewActivity extends AppCompatActivity {
 
     private void editQty(int pos) {
         if (editDialog == null) {
-            editDialog = new EditDialog(this, R.style.JudgeDialog, products.get(pos).getiQty(), new EditDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm, @NonNull String data) {
-                    if (confirm) {
-                        products.get(pos).setiQty(Integer.parseInt(data));
-                        mAdapter.notifyItemChanged(pos);
-                        tvTotal.setText(getTotal(products));
-                    }
-                }
-            }).setTitle("修改" + products.get(pos).getsBarCode() + "片数");
+            editDialog = new EditDialog(this).title("修改" + products.get(pos).getsBarCode() + "片数").max(products.get(pos).getiQty());
+            editDialog.show();
+        } else {
+            editDialog.setTitle("修改" + products.get(pos).getsBarCode() + "片数");
+            editDialog.setMax(products.get(pos).getiQty());
+            editDialog.show();
         }
-        editDialog.show();
+        editDialog.setOnCloseListener(new EditDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm, @NonNull String data) {
+                if (confirm) {
+                    products.get(pos).setiQty(Integer.parseInt(data));
+                    mAdapter.notifyItemChanged(pos);
+                    tvTotal.setText(getTotal(products));
+                }
+            }
+        });
     }
 
     /**
