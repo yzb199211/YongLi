@@ -314,15 +314,21 @@ public class OutputDetailActivity extends AppCompatActivity {
     }
 
     private void isClean() {
-        if (cleanDialog == null) {
-            cleanDialog = new JudgeDialog(this, R.style.JudgeDialog, "清空后将直接保存数据，确认是否清空？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm)
-                        clearChild(null);
-                }
-            });
-        } else cleanDialog.show();
+        if (cleanDialog == null)
+            cleanDialog = new JudgeDialog(this, R.style.JudgeDialog, "清空后将直接保存数据，确认是否清空？");
+        cleanDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                new JudgeDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(boolean confirm) {
+                        if (confirm)
+                            clearChild(null);
+                    }
+                };
+            }
+        });
+        cleanDialog.show();
     }
 
     @OnClick({R.id.tv_empty, R.id.iv_back, R.id.iv_right2, R.id.iv_right, R.id.tv_storage, R.id.iv_clear, R.id.iv_scan,
@@ -367,32 +373,17 @@ public class OutputDetailActivity extends AppCompatActivity {
                     Toasts.showShort(OutputDetailActivity.this, "请选择仓库");
                 break;
             case R.id.tv_notice:
-                if (TextUtils.isEmpty(customerid)) {
-                    setLookUp(notices, "发货通知单", NOTICECODE);
-//                    Intent intent = new Intent();
-//                    intent.setClass(OutputDetailActivity.this, LookUpActivity.class);
-//                    intent.putExtra("data", new Gson().toJson(notices));
-//                    intent.putExtra("code", NOTICECODE);
-//                    intent.putExtra("title", "发货通知单");
-//                    startActivityForResult(intent, NOTICECODE);
+//                if (TextUtils.isEmpty(customerid)) {
+                setLookUp(notices, "发货通知单", NOTICECODE);
 
-                } else {
-                    setLookUp(selectLookUp(customerid), "发货通知单", NOTICECODE);
-                }
+//                } else {
+//                    setLookUp(selectLookUp(customerid), "发货通知单", NOTICECODE);
+//                }
                 break;
             case R.id.tv_supplier:
-//                if (pvCustom == null)
-//                    initPvCustomer();
-//                pvCustom.show();
                 try {
                     if (TextUtils.isEmpty(noticeid)) {
                         setLookUp(customers, "客户选择", CUSTOMERCODE);
-//                        Intent intent = new Intent();
-//                        intent.setClass(OutputDetailActivity.this, LookUpActivity.class);
-//                        intent.putExtra("data", new Gson().toJson(customers));
-//                        intent.putExtra("code", CUSTOMERCODE);
-//                        intent.putExtra("title", "客户选择");
-//                        startActivityForResult(intent, CUSTOMERCODE);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -445,14 +436,16 @@ public class OutputDetailActivity extends AppCompatActivity {
      * 判断是否删除
      */
     private void isDelete() {
-        if (deleteDialog == null)
-            deleteDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否删除？", new JudgeDialog.OnCloseListener() {
+        if (deleteDialog == null) {
+            deleteDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否删除？");
+            deleteDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
                 @Override
                 public void onClick(boolean confirm) {
                     if (confirm)
                         deleteMain();
                 }
             });
+        }
         deleteDialog.show();
     }
 
@@ -481,13 +474,14 @@ public class OutputDetailActivity extends AppCompatActivity {
      */
     private void isSave() {
         if (saveDialog == null)
-            saveDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否保存？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm)
-                        submit(SUMITCODE, 0);
-                }
-            });
+            saveDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否保存？");
+        saveDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                if (confirm)
+                    submit(SUMITCODE, 0);
+            }
+        });
         saveDialog.show();
     }
 
@@ -516,13 +510,14 @@ public class OutputDetailActivity extends AppCompatActivity {
      */
     private void isSubmit() {
         if (submitDialog == null)
-            submitDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否提交？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm)
-                        submit(SUMITCODE, 1);
-                }
-            });
+            submitDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否提交？");
+        submitDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                if (confirm)
+                    submit(SUMITCODE, 1);
+            }
+        });
         submitDialog.show();
     }
 
@@ -599,12 +594,6 @@ public class OutputDetailActivity extends AppCompatActivity {
                 .setContentTextSize(18)//设置滚轮文字大小
                 .setDividerColor(Color.LTGRAY)//设置分割线的颜色
                 .setSelectOptions(0)//默认选中项
-//                .setBgColor(Color.BLACK)
-//                .setTitleBgColor(Color.DKGRAY)
-//                .setTitleColor(Color.LTGRAY)
-//                .setCancelColor(Color.YELLOW)
-//                .setSubmitColor(Color.YELLOW)
-//                .setTextColorCenter(Color.LTGRAY)
                 .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
                 .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
                 .setLabels("", "", "")
@@ -951,7 +940,6 @@ public class OutputDetailActivity extends AppCompatActivity {
                     break;
                 case NOTICECODE:
                     if (StringUtil.isNotEmpty(noticeid) && !noticeid.equals(data.getStringExtra("id"))) {
-
                         isChangeNotice(data);
                     } else {
                         setNotiveView(data);
@@ -971,15 +959,15 @@ public class OutputDetailActivity extends AppCompatActivity {
      */
     private void isChangeNotice(Intent data) {
         if (noticeDialog == null)
-            noticeDialog = new JudgeDialog(this, R.style.JudgeDialog, "变更通知单将清空条码数据是否更改？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm) {
-                        changeNotice(data);
-                    }
-
+            noticeDialog = new JudgeDialog(this, R.style.JudgeDialog, "变更通知单将清空条码数据是否更改？");
+        noticeDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                if (confirm) {
+                    changeNotice(data);
                 }
-            });
+            }
+        });
         noticeDialog.show();
     }
 
@@ -1034,9 +1022,10 @@ public class OutputDetailActivity extends AppCompatActivity {
         noticeid = data.getStringExtra("id");
         tvNotice.setText(data.getStringExtra("name"));
         customerid = data.getStringExtra("link_id");
+        Log.e("customerid", customerid + ",");
         if (StringUtil.isNotEmpty(customerid)) {//关联客户信息
             for (int i = 0; i < customers.size(); i++) {
-                if (customerid == customers.get(i).getsCode()) {
+                if (customerid.equals(customers.get(i).getsCode())) {
                     tvSupplier.setText(customers.get(i).getsName());
                     break;
                 }

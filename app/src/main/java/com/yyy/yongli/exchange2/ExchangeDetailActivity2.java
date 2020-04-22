@@ -306,15 +306,16 @@ public class ExchangeDetailActivity2 extends AppCompatActivity {
     }
 
     private void isClean() {
-        if (cleanDialog == null) {
-            cleanDialog = new JudgeDialog(this, R.style.JudgeDialog, "清空后将直接保存数据，确认是否清空？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm)
-                        clearChild();
-                }
-            });
-        } else cleanDialog.show();
+        if (cleanDialog == null)
+            cleanDialog = new JudgeDialog(this, R.style.JudgeDialog, "清空后将直接保存数据，确认是否清空？");
+        cleanDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                if (confirm)
+                    clearChild();
+            }
+        });
+        cleanDialog.show();
     }
 
     @OnClick({R.id.tv_storage_in, R.id.tv_storage_out, R.id.tv_empty, R.id.iv_back, R.id.iv_right2, R.id.iv_right, R.id.tv_storage, R.id.iv_clear, R.id.iv_scan, R.id.iv_add_detail, R.id.tv_supplier, R.id.tv_date, R.id.tv_delete, R.id.tv_save, R.id.tv_submit})
@@ -402,13 +403,14 @@ public class ExchangeDetailActivity2 extends AppCompatActivity {
      */
     private void isDelete() {
         if (deleteDialog == null)
-            deleteDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否删除？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm)
-                        deleteMain();
-                }
-            });
+            deleteDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否删除？");
+        deleteDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                if (confirm)
+                    deleteMain();
+            }
+        });
         deleteDialog.show();
     }
 
@@ -437,13 +439,19 @@ public class ExchangeDetailActivity2 extends AppCompatActivity {
      */
     private void isSave() {
         if (saveDialog == null)
-            saveDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否保存？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm)
-                        submit(SUMITCODE, 0);
-                }
-            });
+            saveDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否保存？");
+        saveDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                new JudgeDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(boolean confirm) {
+                        if (confirm)
+                            submit(SUMITCODE, 0);
+                    }
+                };
+            }
+        });
         saveDialog.show();
     }
 
@@ -472,13 +480,14 @@ public class ExchangeDetailActivity2 extends AppCompatActivity {
      */
     private void isSubmit() {
         if (submitDialog == null)
-            submitDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否提交？", new JudgeDialog.OnCloseListener() {
-                @Override
-                public void onClick(boolean confirm) {
-                    if (confirm)
-                        submit(SUMITCODE, 1);
-                }
-            });
+            submitDialog = new JudgeDialog(this, R.style.JudgeDialog, "是否提交？");
+        submitDialog.setOnCloseListener(new JudgeDialog.OnCloseListener() {
+            @Override
+            public void onClick(boolean confirm) {
+                if (confirm)
+                    submit(SUMITCODE, 1);
+            }
+        });
         submitDialog.show();
     }
 
@@ -675,7 +684,7 @@ public class ExchangeDetailActivity2 extends AppCompatActivity {
      */
     private void initPvStockIn() {
 
-        pvStockIn= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+        pvStockIn = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
                 //返回的分别是三个级别的选中位置

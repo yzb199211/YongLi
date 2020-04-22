@@ -73,9 +73,7 @@ public class LookUpActivity extends AppCompatActivity {
 
         mlist = new Gson().fromJson(data, new TypeToken<List<LookUpBean>>() {
         }.getType());
-//        Log.e("dara", mlist.size() + "");
         showList.addAll(mlist);
-//        Log.e("dara", showList.size() + "");
         tvTitle.setText(title);
         refreshList();
         setLookUp();
@@ -109,7 +107,7 @@ public class LookUpActivity extends AppCompatActivity {
         Pattern pattern = Pattern.compile(name);
         showList.clear();
         for (int i = 0; i < mlist.size(); i++) {
-            Matcher matcher = pattern.matcher(mlist.get(i).getsCode());
+            Matcher matcher = pattern.matcher(mlist.get(i).getsName());
             Matcher matcher1 = pattern.matcher(mlist.get(i).getsCode());
             if (matcher.find() || matcher1.find()) {
                 showList.add(mlist.get(i));
@@ -127,9 +125,9 @@ public class LookUpActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(View view, int position) {
                     Intent intent = new Intent();
-                    intent.putExtra("name", mlist.get(position).getsName());
-                    intent.putExtra("id", mlist.get(position).getsCode());
-                    intent.putExtra("link_id", mlist.get(position).getsClassID());
+                    intent.putExtra("name", showList.get(position).getsName());
+                    intent.putExtra("id", showList.get(position).getsCode());
+                    intent.putExtra("link_id", showList.get(position).getsClassID());
                     setResult(code, intent);
                     finish();
                 }
