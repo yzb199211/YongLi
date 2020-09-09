@@ -20,12 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.yyy.yongli.R;
+import com.yyy.yongli.dialog.EditDialog;
 import com.yyy.yongli.dialog.JudgeDialog;
 import com.yyy.yongli.dialog.LoadingDialog;
 import com.yyy.yongli.input.InputAdapter;
@@ -116,6 +118,7 @@ public class OutputScanActivity extends AppCompatActivity {
     InputAdapter mAdapter;
     ScanTotalAdapter totalAdapter;
     private JudgeDialog deleteDialog;
+    private EditDialog editDialog;
     SharedPreferencesHelper preferencesHelper;
 
     @Override
@@ -171,6 +174,7 @@ public class OutputScanActivity extends AppCompatActivity {
         rvTotal.setLayoutManager(new LinearLayoutManager(this));
         getProduct();
     }
+
 
     private void setEdit() {
 
@@ -314,9 +318,12 @@ public class OutputScanActivity extends AppCompatActivity {
                     mAdapter.setOnItemClickListener(new OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
-                            isDelete(position);
+                            initEditDialog(position);
                         }
                     });
+                    mAdapter.setOnLongClickListener(((view, pos) -> {
+                        isDelete(pos);
+                    }));
                 } else {
                     mAdapter.notifyDataSetChanged();
                     tvTitle.setText("扫描条码" + "(" + products.size() + ")");
@@ -334,6 +341,26 @@ public class OutputScanActivity extends AppCompatActivity {
             totalAdapter.notifyDataSetChanged();
         }
 
+    }
+
+    private void initEditDialog(int pos) {
+        if (editDialog == null) {
+            editDialog = new EditDialog(this);
+            editDialog.setOnCloseListener(new EditDialog.OnCloseListener() {
+                @Override
+                public void onClick(boolean confirm, @NonNull String data) {
+                    if (confirm && StringUtil.isNotEmpty(data)) {
+                        products.get(pos).setCount(Integer.parseInt(data));
+                        showList.get(pos).setCount(Integer.parseInt(data));
+                        refreshList();
+                    }
+                }
+            });
+        }
+
+        editDialog.setTitle("数量修改");
+        editDialog.setMax(showList.get(pos).getCount());
+        editDialog.show();
     }
 
     /**
@@ -416,10 +443,6 @@ public class OutputScanActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-//                codes.clear();
-//                products.clear();
-//                refreshList();
                 break;
             case R.id.tv_save:
                 codes.clear();
@@ -427,7 +450,6 @@ public class OutputScanActivity extends AppCompatActivity {
                 totals.clear();
                 showList.clear();
                 refreshList();
-//                showORhide();
                 break;
             case R.id.tv_submit:
                 saveCode();
@@ -606,7 +628,6 @@ public class OutputScanActivity extends AppCompatActivity {
         List<NetParams> params = new ArrayList<>();
         params.add(new NetParams("otype", "GetBscDataStockD"));
         params.add(new NetParams("iMainRecNo", stockID + ""));
-//        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
         return params;
     }
 
@@ -648,8 +669,6 @@ public class OutputScanActivity extends AppCompatActivity {
                             }
                         });
                     } else {
-//                        Log.e(TAG, string);
-//                        Log.e(TAG, jsonObject.getString("message"));
                         loadFail(jsonObject.getString("message"));
                     }
                 } catch (Exception e) {
@@ -688,9 +707,6 @@ public class OutputScanActivity extends AppCompatActivity {
             }
         }
         params.add(new NetParams("data", codes));
-//        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
-
-        Log.e(TAG, "iRecNo:" + mainID + ";" + "data:" + codes);
         return params;
     }
 
@@ -717,13 +733,11 @@ public class OutputScanActivity extends AppCompatActivity {
 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         isDown = false;
-//        Log.e(TAG, event.getScanCode() + "up");
         if (!isShow) {
             if (event.getScanCode() == 261) {
                 etCode.clearFocus();
                 code = etCode.getText().toString();
                 if (StringUtil.isNotEmpty(code) && !isLoad) {
-//                Log.e(TAG, codes.contains(code) + "" + codes.size() + code);
                     if (codes.contains(code) == false) {
                         codes.add(code);
                         getScamData(code);
@@ -800,7 +814,7 @@ public class OutputScanActivity extends AppCompatActivity {
                                 }
 //                                showORhide();
                                 refreshList();
-
+                                initEditDialog(0);
                             } else {
                                 Toasts.showShort(OutputScanActivity.this, "条码错误");
                                 isLoad = false;
@@ -836,9 +850,6 @@ public class OutputScanActivity extends AppCompatActivity {
         params.add(new NetParams("sbarcode", codes));
         params.add(new NetParams("sTableName", tableName));
         params.add(new NetParams("iBscDataStockMRecNo", stockID + ""));
-
-        Log.e(TAG, codes);
-//        params.add(new NetParams("sCompanyCode", (String) preferencesHelper.getSharedPreference("db", "")));
         return params;
     }
 
