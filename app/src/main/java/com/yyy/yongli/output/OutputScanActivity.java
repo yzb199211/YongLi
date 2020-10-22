@@ -492,7 +492,6 @@ public class OutputScanActivity extends AppCompatActivity {
                     totals.add(0, storageScanBean);
             }
         }
-//        Log.e(TAG, new Gson().toJson(totals));
     }
 
     /**

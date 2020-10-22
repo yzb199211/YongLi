@@ -259,7 +259,7 @@ public class OutputDetailActivity extends AppCompatActivity {
 
             stocks.addAll(storage.getDataset().getBscDataStockM());
             notices.addAll(storage.getDataset().getSDSendM());
-//            notices.add(0, new LookUpBean("", "无", ""));
+            notices.add(0, new LookUpBean("", "无", ""));
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -571,69 +571,6 @@ public class OutputDetailActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 初始化供应商
-     */
-    private void initPvCustomer() {
-        pvCustom = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
-            @Override
-            public void onOptionsSelect(int options1, int options2, int options3, View v) {
-                //返回的分别是三个级别的选中位置
-//                String tx = options1Items.get(options1).getPickerViewText()
-//                        + options2Items.get(options1).get(options2)
-                /* + options3Items.get(options1).get(options2).get(options3).getPickerViewText()*/
-                customerid = customers.get(options1).getsCode();
-                if (TextUtils.isEmpty(customerid))
-                    tvSupplier.setText("");
-                else
-                    tvSupplier.setText(customers.get(options1).getPickerViewText());
-
-            }
-        })
-                .setTitleText("客户选择")
-                .setContentTextSize(18)//设置滚轮文字大小
-                .setDividerColor(Color.LTGRAY)//设置分割线的颜色
-                .setSelectOptions(0)//默认选中项
-                .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
-                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
-                .setLabels("", "", "")
-                .isDialog(true)
-                .setBgColor(0xFFFFFFFF) //设置外部遮罩颜色
-                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
-                    @Override
-                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
-//                        String str = "options1: " + options1 + "\noptions2: " + options2 + "\noptions3: " + options3;
-//                        Toast.makeText(StorageActivity.this, str, Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .build();
-
-//        pvOptions.setSelectOptions(1,1);
-        pvCustom.setPicker(customers);//一级选择器
-//        pvCustom.setPicker(options1Items, options2Items);//二级选择器
-        /*pvOptions.setPicker(options1Items, options2Items,options3Items);//三级选择器*/
-        Dialog mDialog = pvCustom.getDialog();
-        if (mDialog != null) {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    Gravity.BOTTOM);
-            params.leftMargin = 0;
-            params.rightMargin = 0;
-            pvCustom.getDialogContainerLayout().setLayoutParams(params);
-            Window dialogWindow = mDialog.getWindow();
-            if (dialogWindow != null) {
-                dialogWindow.setWindowAnimations(R.style.picker_view_slide_anim);//修改动画样式
-                dialogWindow.setGravity(Gravity.BOTTOM);//改成Bottom,底部显示
-                dialogWindow.setDimAmount(0.1f);
-                //当显示只有一列是需要设置window宽度，防止两边有空隙；
-                WindowManager.LayoutParams winParams;
-                winParams = dialogWindow.getAttributes();
-                winParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-                dialogWindow.setAttributes(winParams);
-            }
-        }
-    }
 
     /**
      * 初始化仓库
@@ -1020,7 +957,7 @@ public class OutputDetailActivity extends AppCompatActivity {
 
     private void setNotiveView(Intent data) {
         noticeid = data.getStringExtra("id");
-        tvNotice.setText(data.getStringExtra("name"));
+        tvNotice.setText(data.getStringExtra("name").equals("无")?"":data.getStringExtra("name"));
         customerid = data.getStringExtra("link_id");
         Log.e("customerid", customerid + ",");
         if (StringUtil.isNotEmpty(customerid)) {//关联客户信息
