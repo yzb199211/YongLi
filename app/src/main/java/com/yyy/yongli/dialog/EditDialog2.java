@@ -3,6 +3,10 @@ package com.yyy.yongli.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -13,10 +17,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.yyy.yongli.R;
+import com.yyy.yongli.model.StorageScanBean;
 import com.yyy.yongli.util.StringUtil;
 
 
-public class EditDialog extends Dialog implements View.OnClickListener, View.OnKeyListener {
+public class EditDialog2 extends Dialog implements View.OnClickListener, View.OnKeyListener {
     Context context;
     private String title;
     private int max = 0;
@@ -26,6 +31,10 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
     private EditText etContent;
     private TextView tvCancle;
     private TextView tvSubmit;
+    private EditText etTip;
+    private TextView tvTotal;
+    private TextView tvQty;
+    private StorageScanBean barcode;
     OnCloseListener onCloseListener;
 
     @Override
@@ -47,7 +56,7 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
     }
 
     public interface OnCloseListener {
-        void onClick(boolean confirm, @NonNull String data);
+        void onClick(boolean confirm, @NonNull StorageScanBean data);
     }
 
     public void setOnCloseListener(OnCloseListener onCloseListener) {
@@ -58,9 +67,11 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
      * 构造方法
      *
      * @param context
+     * @param storageScanBean
      */
-    public EditDialog(@NonNull Context context) {
+    public EditDialog2(@NonNull Context context, StorageScanBean storageScanBean) {
         super(context, R.style.JudgeDialog);
+        barcode = storageScanBean;
         this.context = context;
     }
 
@@ -70,7 +81,7 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
      * @param context
      * @param themeResId dialog样式
      */
-    public EditDialog(Context context, int themeResId, int max) {
+    public EditDialog2(Context context, int themeResId, int max) {
         super(context, themeResId);
         this.context = context;
         this.max = max;
@@ -84,7 +95,7 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
      * @param max        设置内容
      * @param listener   设置监听
      */
-    public EditDialog(Context context, int themeResId, int max, OnCloseListener listener) {
+    public EditDialog2(Context context, int themeResId, int max, OnCloseListener listener) {
         super(context, themeResId);
         this.context = context;
         this.max = max;
@@ -95,9 +106,10 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_edit);
+        setContentView(R.layout.dialog_edit2);
         setCanceledOnTouchOutside(false);
         initView();
+        setData(barcode);
     }
 
     /**
@@ -105,11 +117,15 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
      */
     private void initView() {
         tvTitle = findViewById(R.id.tv_title);
+        etTip = findViewById(R.id.et_tip);
+        tvTotal = findViewById(R.id.tv_total);
+        tvQty = findViewById(R.id.tv_qty);
         etContent = findViewById(R.id.et_content);
         tvCancle = findViewById(R.id.tv_cancel);
         tvSubmit = findViewById(R.id.tv_submit);
-
-        etContent.setText(String.valueOf(max) + "");
+        etTip.setOnKeyListener(this);
+        etContent.setOnKeyListener(this);
+//        tvQty.setText(max + "");
         if (StringUtil.isNotEmpty(title))
             tvTitle.setText(title);
         if (StringUtil.isNotEmpty(positiveName))
@@ -118,6 +134,46 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
             tvCancle.setText(negativeName);
         tvCancle.setOnClickListener(this);
         tvSubmit.setOnClickListener(this);
+        initEdit();
+    }
+
+    private void initEdit() {
+        etContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                barcode.setiBox(TextUtils.isEmpty(editable.toString()) ? 0 : Integer.parseInt(editable.toString()));
+                barcode.setiQty(barcode.getiBoxQty() * barcode.getiBox() + barcode.getiTip());
+                setCount();
+            }
+        });
+        etTip.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                barcode.setiTip(TextUtils.isEmpty(editable.toString()) ? 0 : Integer.parseInt(editable.toString()));
+                barcode.setiQty(barcode.getiBoxQty() * barcode.getiBox() + barcode.getiTip());
+                setCount();
+            }
+        });
     }
 
     @Override
@@ -133,7 +189,7 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
             case R.id.tv_submit:
 //                hintKeyBoard(context);
                 if (onCloseListener != null) {
-                    onCloseListener.onClick(true, etContent.getText().toString());
+                    onCloseListener.onClick(true, barcode);
                 }
                 break;
             default:
@@ -158,7 +214,7 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
      * @param title
      * @return
      */
-    public EditDialog title(String title) {
+    public EditDialog2 title(String title) {
         this.title = title;
         return this;
     }
@@ -168,7 +224,7 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
      *
      * @return
      */
-    public EditDialog max(int max) {
+    public EditDialog2 max(int max) {
         this.max = max;
         return this;
     }
@@ -183,13 +239,32 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
         etContent.setText(max + "");
     }
 
+    public void setData(StorageScanBean data) {
+
+        barcode = data;
+        if (tvTitle != null) tvTitle.setText(data.getsInBarCode());
+        if (etContent != null)
+            etContent.setText(barcode.getiBox() + "");
+        if (etTip != null)
+            etTip.setText(barcode.getiTip() == 0 ? "" : barcode.getiTip() + "");
+        setCount();
+    }
+
+    private void setCount() {
+        if (tvQty != null)
+            tvQty.setText("每箱：" + barcode.getiBoxQty() + "");
+        if (tvTotal != null)
+            tvTotal.setText("总数：" + barcode.getiQty() + "");
+    }
+
+
     /**
      * 设置确定按钮内容
      *
      * @param positiveName
      * @return
      */
-    public EditDialog setPositiveName(String positiveName) {
+    public EditDialog2 setPositiveName(String positiveName) {
         this.positiveName = positiveName;
         return this;
     }
@@ -200,7 +275,7 @@ public class EditDialog extends Dialog implements View.OnClickListener, View.OnK
      * @param negativeName
      * @return
      */
-    public EditDialog setNegativeName(String negativeName) {
+    public EditDialog2 setNegativeName(String negativeName) {
         this.negativeName = negativeName;
         return this;
     }

@@ -92,6 +92,8 @@ public class LoginActivity extends BaseActivity {
         String name = (String) preferencesHelper.getSharedPreference("userid", "");
         etUser.setText(name);
         etUser.setSelection(name.length());
+        etUser.setOnKeyListener(this);
+        etPwd.setOnKeyListener(this);
     }
 
 
@@ -103,7 +105,7 @@ public class LoginActivity extends BaseActivity {
                 try {
                     getText();
 
-                        isNone();
+                    isNone();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -140,8 +142,8 @@ public class LoginActivity extends BaseActivity {
 
 
     private String getUrl() {
-        if (istext = true)
-            preferencesHelper.put("url",NetConfig.url);
+        if (istext == true)
+            preferencesHelper.put("url", NetConfig.url);
         return (String) preferencesHelper.getSharedPreference("url", "");
     }
 
@@ -296,7 +298,7 @@ public class LoginActivity extends BaseActivity {
 //                    String db = jsonObject.getString("sCompanyCode");
                     preferencesHelper.put("url", url + "/MobileServerNew/");
 //                    preferencesHelper.put("db", db);
-                    Log.e(TAG, (String) preferencesHelper.getSharedPreference("url", "") );
+                    Log.e(TAG, (String) preferencesHelper.getSharedPreference("url", ""));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

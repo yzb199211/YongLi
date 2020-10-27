@@ -19,7 +19,11 @@ public class StorageScanBean {
     private String fResistance;//电阻
     private String sElectrode;//电极
     private String fCurrent;//电流
-    private int iQty;//片数
+    private int iQty;//总片数
+    private int iTip;//零头片数
+    private int iStockQty;//库存
+    private int iBoxQty;//每箱片数
+    private int iBox = 1;//箱数
     private float fTC;
     private float fTS;
 
@@ -58,7 +62,8 @@ public class StorageScanBean {
     public int getiQty() {
         return iQty;
     }
-    public void setiQty(int iQty){
+
+    public void setiQty(int iQty) {
         this.iQty = iQty;
     }
 
@@ -157,4 +162,33 @@ public class StorageScanBean {
     public void setsBarCode(String sBarCode) {
         this.sBarCode = sBarCode;
     }
+
+    public int getiStockQty() {
+        return iStockQty;
+    }
+
+    public void setiStockQty(int iStockQty) {
+        this.iStockQty = iStockQty;
+    }
+
+    public int getiBox() {
+        return iBox;
+    }
+
+    public void setiBox(int iBox) {
+        this.iBox = iBox;
+    }
+
+    public int getiTip() {
+        return iTip;
+    }
+
+    public void setiTip(int iTip) {
+        this.iTip = iTip;
+    }
+
+    public int getiBoxQty() {
+        return iBoxQty;
+    }
+
 }

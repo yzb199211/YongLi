@@ -1,12 +1,10 @@
 package com.yyy.yongli.scan;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,12 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.yyy.yongli.R;
-import com.yyy.yongli.dialog.EditDialog;
 import com.yyy.yongli.dialog.EditDialog2;
 import com.yyy.yongli.dialog.JudgeDialog;
 import com.yyy.yongli.dialog.LoadingDialog;
 import com.yyy.yongli.input.InputAdapter;
-import com.yyy.yongli.input.InputAddActivity;
 import com.yyy.yongli.interfaces.OnItemClickListener;
 import com.yyy.yongli.interfaces.OnLongClickListener;
 import com.yyy.yongli.interfaces.ResponseListener;
@@ -50,7 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ScanNewActivity extends AppCompatActivity {
+public class ScanNewActivity2 extends AppCompatActivity {
     private static final String TAG = "ScanNewActivity";
     @BindView(R.id.tv_title)
     TextView tvTitle;
@@ -70,12 +66,13 @@ public class ScanNewActivity extends AppCompatActivity {
     int mainId;
     int stockId;
 
-    InputAdapter mAdapter;
+    ScanNewAdapter2 mAdapter;
     SharedPreferencesHelper sharedPreferencesHelper;
 
     List<StorageScanBean> products;
     Set<String> codes;
 
+    EditDialog2 editDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,7 +210,7 @@ public class ScanNewActivity extends AppCompatActivity {
             public void run() {
                 Log.e(TAG, TAG);
                 if (mAdapter == null) {
-                    mAdapter = new InputAdapter(ScanNewActivity.this, products);
+                    mAdapter = new ScanNewAdapter2(ScanNewActivity2.this, products);
                     rvScan.setAdapter(mAdapter);
                     tvTitle.setText("扫描条码" + "(" + products.size() + ")");
                     tvTotal.setText(getTotal(products));
@@ -239,27 +236,26 @@ public class ScanNewActivity extends AppCompatActivity {
         });
     }
 
-    EditDialog editDialog;
 
     private void editQty(int pos) {
         if (editDialog == null) {
-            editDialog = new EditDialog(this).title("修改" + products.get(pos).getsBarCode() + "片数").max(products.get(pos).getiQty());
-            editDialog.show();
-        } else {
-            editDialog.setTitle("修改" + products.get(pos).getsBarCode() + "片数");
-            editDialog.setMax(products.get(pos).getiQty());
-            editDialog.show();
+            editDialog = new EditDialog2(this, products.get(pos));
+
         }
-        editDialog.setOnCloseListener(new EditDialog.OnCloseListener() {
+//        editDialog.setTitle("修改" + products.get(pos).getsBarCode() + "片数");
+        editDialog.setData(products.get(pos));
+        editDialog.setOnCloseListener(new EditDialog2.OnCloseListener() {
             @Override
-            public void onClick(boolean confirm, @NonNull String data) {
+            public void onClick(boolean confirm, @NonNull StorageScanBean data) {
                 if (confirm) {
-                    products.get(pos).setiQty(Integer.parseInt(data));
+//                    products.get(pos).setiQty(data.getiQty());
+                    products.set(pos, data);
                     mAdapter.notifyItemChanged(pos);
                     tvTotal.setText(getTotal(products));
                 }
             }
         });
+        editDialog.show();
     }
 
     /**
@@ -273,7 +269,7 @@ public class ScanNewActivity extends AppCompatActivity {
                 @Override
                 public void onClick(boolean confirm) {
                     if (confirm) {
-                        codes.remove(products.get(position).getsInBarCode());
+                        codes.remove(products.get(position).getsBarCode());
                         products.remove(position);
                         refreshList();
                     }
@@ -338,16 +334,24 @@ public class ScanNewActivity extends AppCompatActivity {
         params.add(new NetParams("otype", "MMProductDsave"));
         params.add(new NetParams("sTableName", tableName));
         params.add(new NetParams("iRecNo", mainId + ""));
-        for (int i = 0; i < products.size(); i++) {
-            if (i != products.size() - 1)
-                codes = codes + products.get(i).getsBarCode() + ","
-                        + products.get(i).getiBscDataStockDRecNo() + "," + products.get(i).getiQty() + ";";
-            else {
-                codes = codes + products.get(i).getsBarCode() + ","
-                        + products.get(i).getiBscDataStockDRecNo() + "," + products.get(i).getiQty();
-            }
-        }
-        params.add(new NetParams("data", codes));
+//        for (int i = 0; i < products.size(); i++) {
+//            if (i != products.size() - 1)
+//                codes = codes + products.get(i).getsBarCode() + ","
+//                        + products.get(i).getiBscDataStockDRecNo() + ","
+//                        + products.get(i).getiQty() + ","
+//                        + products.get(i).getiBox() + ","
+//                        + products.get(i).getiTip() + ","
+//                        + products.get(i).getTotal() + ";";
+//            else {
+//                codes = codes + products.get(i).getsBarCode() + ","
+//                        + products.get(i).getiBscDataStockDRecNo() + ","
+//                        + products.get(i).getiQty() + ","
+//                        + products.get(i).getiBox() + ","
+//                        + products.get(i).getiTip() + ","
+//                        + products.get(i).getTotal();
+//            }
+//        }
+        params.add(new NetParams("data", new Gson().toJson(products)));
         return params;
     }
 
@@ -393,7 +397,7 @@ public class ScanNewActivity extends AppCompatActivity {
             public void run() {
                 LoadingDialog.cancelDialogForLoading();
                 if (StringUtil.isNotEmpty(msg)) {
-                    Toasts.showShort(ScanNewActivity.this, msg);
+                    Toasts.showShort(ScanNewActivity2.this, msg);
                 }
             }
         });

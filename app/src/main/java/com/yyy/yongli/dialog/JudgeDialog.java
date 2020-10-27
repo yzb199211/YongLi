@@ -38,7 +38,7 @@ public class JudgeDialog extends Dialog implements View.OnClickListener {
      * @param context
      */
     public JudgeDialog(@NonNull Context context) {
-        super(context);
+        super(context, R.style.JudgeDialog);
         this.context = context;
     }
 

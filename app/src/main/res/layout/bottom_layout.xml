@@ -16,6 +16,7 @@
         android:gravity="center_vertical"
         android:padding="@dimen/dp_5"
         android:text=""
+        android:textSize="@dimen/sp_14"
         android:visibility="gone" />
 
     <TextView
@@ -28,6 +29,7 @@
         android:padding="@dimen/dp_5"
         android:text="同步"
         android:textColor="@color/white"
+        android:textSize="@dimen/sp_14"
         android:visibility="invisible" />
 
     <TextView
@@ -39,7 +41,8 @@
         android:clickable="true"
         android:gravity="center"
         android:text="删除"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
 
     <TextView
         android:id="@+id/tv_save"
@@ -50,7 +53,8 @@
         android:clickable="true"
         android:gravity="center"
         android:text="保存"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
 
     <TextView
         android:id="@+id/tv_submit"
@@ -61,5 +65,6 @@
         android:clickable="true"
         android:gravity="center"
         android:text="提交"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
 </LinearLayout>

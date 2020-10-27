@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
+import com.yyy.yongli.BaseActivity;
 import com.yyy.yongli.R;
 import com.yyy.yongli.dialog.LoadingDialog;
 import com.yyy.yongli.interfaces.ResponseListener;
@@ -54,7 +55,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ExchangDetailActivity extends AppCompatActivity {
+public class ExchangDetailActivity extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView tvTitle;

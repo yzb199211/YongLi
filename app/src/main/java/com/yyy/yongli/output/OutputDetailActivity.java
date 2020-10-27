@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
+import com.yyy.yongli.BaseActivity;
 import com.yyy.yongli.R;
 import com.yyy.yongli.dialog.JudgeDialog;
 import com.yyy.yongli.dialog.LoadingDialog;
@@ -44,8 +45,8 @@ import com.yyy.yongli.pick.listener.OnTimeSelectChangeListener;
 import com.yyy.yongli.pick.listener.OnTimeSelectListener;
 import com.yyy.yongli.pick.view.OptionsPickerView;
 import com.yyy.yongli.pick.view.TimePickerView;
-import com.yyy.yongli.scan.Scan2Activity;
-import com.yyy.yongli.scan.ScanNewActivity;
+
+import com.yyy.yongli.scan.ScanNewActivity2;
 import com.yyy.yongli.util.CodeConfig;
 import com.yyy.yongli.util.NetConfig;
 import com.yyy.yongli.util.NetParams;
@@ -66,7 +67,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class OutputDetailActivity extends AppCompatActivity {
+public class OutputDetailActivity extends BaseActivity {
     private final static String TAG = "OutputDetailActivity";
     private final static int ADDCODE = 100;
     private final static int SUMITCODE = 101;
@@ -705,7 +706,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
                     Intent intent = new Intent();
-                    intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
+                    intent.setClass(OutputDetailActivity.this, ScanNewActivity2.class);
                     intent.putExtra("stockid", stockid);
                     intent.putExtra("mainID", mainID);
                     intent.putExtra("tableName", "MMProductOutD");
@@ -720,7 +721,7 @@ public class OutputDetailActivity extends AppCompatActivity {
 
     private void goAdd() {
         Intent intent = new Intent();
-        intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
+        intent.setClass(OutputDetailActivity.this, ScanNewActivity2.class);
         intent.putExtra("stockid", stockid);
         intent.putExtra("mainID", mainID);
         intent.putExtra("red", isSelect);
@@ -740,7 +741,7 @@ public class OutputDetailActivity extends AppCompatActivity {
                 public void run() {
                     LoadingDialog.cancelDialogForLoading();
                     Intent intent = new Intent();
-                    intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
+                    intent.setClass(OutputDetailActivity.this, ScanNewActivity2.class);
                     intent.putExtra("stockid", stockid);
                     intent.putExtra("mainID", mainID);
                     intent.putExtra("tableName", "MMProductOutD");
@@ -755,7 +756,7 @@ public class OutputDetailActivity extends AppCompatActivity {
 
     private void goScan() {
         Intent intent = new Intent();
-        intent.setClass(OutputDetailActivity.this, ScanNewActivity.class);
+        intent.setClass(OutputDetailActivity.this, ScanNewActivity2.class);
         intent.putExtra("stockid", stockid);
         intent.putExtra("mainID", mainID);
         intent.putExtra("tableName", "MMProductOutD");
